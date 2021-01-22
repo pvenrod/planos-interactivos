@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios</title>
-</head>
-<body>    
-    <table>
+@extends('layouts.master')
+@section('title', 'Lista de usuarios')
+    
+@section('content')
+    <table style="border:1px solid black" align="center">
         <tr>
             <th>ID</th>
             <th>Usuario</th>
@@ -33,11 +29,11 @@
         @endforeach
 
 
+        <br>
         <tr>
             <td colspan="7">
                 <a href="{{route('user.new')}}">Nuevo usuario</a>
             </td>
         </tr>
     </table>
-</body>
-</html>
+@endsection
