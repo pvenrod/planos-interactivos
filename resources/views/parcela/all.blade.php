@@ -34,7 +34,7 @@
 
         <tr>
             
-            <td><a href="{{ route('parcela.new') }}">Nueva parcela</a></td>
+            <td><a href="{{ route('parcela.create') }}">Nueva parcela</a></td>
         </tr>
         
     </table>

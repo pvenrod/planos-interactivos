@@ -12,7 +12,7 @@ class UserController extends Controller
        return view("user.all",$data);
    }
 
-   public function new() {
+   public function create() {
         return view("user.form");
    }
 
@@ -29,6 +29,17 @@ class UserController extends Controller
         $data["usuario"] = User::find($id);
         return view("user.form",$data);
    }
+
+   public function update(Request $r) {
+     $user = User::find($r->id);
+     $user->name = $r->usuario;
+     $user->email = $r->email;
+     if ($r->contrasenya1 != "") {
+          $user->password = $r->contrasenya1;
+     }
+     $user->save();
+     return redirect()->route("user.index");
+}
 
    public function destroy($id) {
      $user = User::find($id);

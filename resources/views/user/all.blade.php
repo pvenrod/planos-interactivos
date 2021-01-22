@@ -32,7 +32,7 @@
         <br>
         <tr>
             <td colspan="7">
-                <a href="{{route('user.new')}}">Nuevo usuario</a>
+                <a href="{{route('user.create')}}">Nuevo usuario</a>
             </td>
         </tr>
     </table>
