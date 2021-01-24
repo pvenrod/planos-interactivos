@@ -17,7 +17,13 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->insert([
             'name' => 'Ruben',
             'email' => 'ruben@iescelia.edu',
-            'password' => 'ruben',
+            'password' => md5('ruben'),
+        ]);
+
+        DB::table('users')->insert([
+            'name' => 'Paolo',
+            'email' => 'paolo@iescelia.edu',
+            'password' => md5('paolo'),
         ]);
     }
 }

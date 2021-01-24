@@ -7,7 +7,11 @@
 </head>
 <body>
     <div id="header">
-        <h1>Planos interactivos</h1>
+        <h1>Planos interactivos. Bienvenido, {{session("user")}}</h1>
+        <form method="post" action="{{ route('auth.logout') }}">
+        @csrf
+            <input type="submit" value="Logout">
+        </form>
     </div>
     <div id="nav">
         <table>

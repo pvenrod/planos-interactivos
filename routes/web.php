@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 // Login  ==========================================================
 Route::get('/', 'AuthController@index')->name("auth.index"); 
-Route::get('/login', 'AuthController@login')->name("auth.login"); 
+Route::post('/login', 'AuthController@login')->name("auth.login");
+Route::post('/logout', 'AuthController@logout')->name("auth.logout");  
 
 // Usuarios ========================================================
 Route::get('/usuarios', 'UserController@index')->name("user.index");

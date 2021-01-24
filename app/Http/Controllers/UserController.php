@@ -8,12 +8,12 @@ use \App\Models\User;
 class UserController extends Controller
 {
    public function index() {
-       $data["usuarios"] = User::all();
-       return view("user.all",$data);
+     $data["usuarios"] = User::all();
+     return view("user.all",$data);
    }
 
    public function create() {
-        return view("user.form");
+     return view("user.form");
    }
 
    public function store(Request $r) {

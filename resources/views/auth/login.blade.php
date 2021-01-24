@@ -6,12 +6,12 @@
     <title>Iniciar sesión</title>
 </head>
 <body> 
-    <form method="get" action="{{route('auth.login')}}">
+    <form method="post" action="{{route('auth.login')}}">
         @csrf
-        Usuario: <input type="text" name="usuario"><br>
-        Contraseña: <input type="password" name="contrasenya"><br>
+        Email: <input type="text" name="email"><br>
+        Contraseña: <input type="password" name="password"><br>
         <input type="submit" value="Iniciar sesión"><br><br>
-        <span style="color: red">{{$error ?? ""}}</span>
     </form>
+    <span style="color:red">{{$error ?? ""}}</span>
 </body>
 </html>
