@@ -15,9 +15,7 @@ class AuthController extends Controller
             return view("auth.login");
 
         } else {
-
-            return redirect()->route("user.index");
-
+            return redirect()->route("user.index"); //Se puede cambiar más adelante.
         }
 
     }
@@ -34,9 +32,9 @@ class AuthController extends Controller
 
                 if (md5($r->password) == $user->password) {
 
-                    session()->put("user",$r->usuario);
+                    session()->put("user",$user->name);
                     return redirect()->route("user.index");
-
+                    
                 } else {
 
                     return $this->loginError("Contraseña incorrecta.");
@@ -72,5 +70,10 @@ class AuthController extends Controller
 
         return redirect()->route("auth.index");
 
+    }
+
+    function denied() {
+        $data['error'] = 'Debes iniciar sesión para continuar';
+        return view('auth.login',$data);
     }
 }
