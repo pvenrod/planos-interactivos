@@ -17,6 +17,7 @@
         <table>
             <tr>
                 <td><a href="{{ route('user.index') }}">Usuarios</a></td>
+                <td><a href="{{ route('zona.index') }}">Zonas</a></td>
                 <td><a href="{{ route('parcela.index') }}">Parcelas</a></td>
             </tr>
         </table>

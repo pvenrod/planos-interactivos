@@ -15,7 +15,10 @@ class ZonasTable extends Migration
     {
         Schema::create('zonas', function(Blueprint $table) {
             $table->id();
-            $table->string("nombre"); 
+            $table->string("nombre")->unique(); 
+            $table->string("descripcion")->nullable(); 
+            $table->string("imagen")->nullable();
+            $table->timestamps();
         });
     }
 

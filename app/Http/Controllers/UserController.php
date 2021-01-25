@@ -20,7 +20,7 @@ class UserController extends Controller
         $user = new User();
         $user->name = $r->usuario;
         $user->email = $r->email;
-        $user->password = $r->contrasenya1;
+        $user->password = md5($r->contrasenya1);
         $user->save();
         return redirect()->route("user.index");
    }
@@ -35,11 +35,11 @@ class UserController extends Controller
      $user->name = $r->usuario;
      $user->email = $r->email;
      if ($r->contrasenya1 != "") {
-          $user->password = $r->contrasenya1;
+          $user->password = md5($r->contrasenya1);
      }
      $user->save();
      return redirect()->route("user.index");
-}
+    }
 
    public function destroy($id) {
      $user = User::find($id);

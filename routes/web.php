@@ -36,3 +36,12 @@ Route::post('/parcelas/almacenar', 'ParcelaController@store')->name("parcela.sto
 Route::get('/parcelas/editar/{id}','ParcelaController@edit')->name('parcela.edit')->middleware('userauth');
 Route::post('/parcelas/editar/{id}', 'ParcelaController@update')->name("parcela.update")->middleware('userauth');
 Route::get('/parcelas/borrar/{id}','ParcelaController@destroy')->name('parcela.destroy')->middleware('userauth');
+
+
+// Zonas ========================================================
+Route::get('/zonas','ZonaController@index')->name("zona.index")->middleware('userauth');
+Route::get('/zonas/crear','ZonaController@create')->name('zona.create')->middleware('userauth');
+Route::post('/zonas/almacenar', 'ZonaController@store')->name("zona.store")->middleware('userauth');
+Route::get('/zonas/editar/{id}','ZonaController@edit')->name('zona.edit')->middleware('userauth');
+Route::post('/zonas/editar/{id}', 'ZonaController@update')->name("zona.update")->middleware('userauth');
+Route::get('/zonas/borrar/{id}','ZonaController@destroy')->name('zona.destroy')->middleware('userauth');
