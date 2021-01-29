@@ -17,7 +17,7 @@ class CreateParcelasTable extends Migration
             $table->id();
             $table->integer("anyo_inicio");
             $table->integer("anyo_fin");
-            $table->string("imagen");
+            $table->string("imagen")->nullable();
             $table->integer("zona_id");
             $table->string("nombre");
             $table->string("descripcion")->nullable();

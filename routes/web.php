@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // Login  ==========================================================
-Route::get('/', 'AuthController@index')->name("auth.index"); 
+Route::get('/', 'AuthController@index')->name("auth.index"); // Para cambiar por la vista principal de la aplicación
 Route::post('/login', 'AuthController@login')->name("auth.login");
 Route::post('/logout', 'AuthController@logout')->name("auth.logout")->middleware('userauth');
 Route::get('/denied','AuthController@denied')->name("auth.denied");  

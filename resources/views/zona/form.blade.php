@@ -9,7 +9,7 @@
         <form method="post" action="{{route('zona.store')}}" enctype="multipart/form-data">
     @endisset
         @csrf
-        Nombre:<span style="color: red">*</span> <input type="text" name="nombre" value="{{$zona->nombre ?? ''}}"><br>
+        Nombre:<span style="color: red">*</span> <input type="text" name="nombre" value="{{$zona->nombre ?? ''}}" required><br>
         Descripción:
         <textarea name="descripcion">
             {{$zona->descripcion ?? ''}}
