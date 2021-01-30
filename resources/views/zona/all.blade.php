@@ -3,7 +3,7 @@
     
 @section('content')
     <span style="color: red">{{$error ?? ""}}</span>
-    <table style="border:1px solid black" align="center">
+    <table class="tablaCRUD">
         <tr>
             <th>ID</th>
             <th>Imagen</th>
@@ -25,18 +25,14 @@
             <td>{{$zona->descripcion}}</td>
             <td>{{$zona->created_at}}</td>
             <td>{{$zona->updated_at}}</td>
-            <td><a href="{{route('zona.edit',$zona->id)}}">Modificar</a></td>
-            <td><a href="{{route('zona.destroy',$zona->id)}}">Eliminar</a></td>
+            <td><a class="boton modificar" href="{{route('zona.edit',$zona->id)}}">Modificar</a></td>
+            <td><a class="boton eliminar" href="{{route('zona.destroy',$zona->id)}}">Eliminar</a></td>
         </tr>
 
         @endforeach
 
-
-        <br>
-        <tr>
-            <td colspan="7">
-                <a href="{{route('zona.create')}}">Nueva zona</a>
-            </td>
-        </tr>
     </table>
+
+     <a class="boton nuevo" href="{{route('zona.create')}}">Nueva zona</a>
+
 @endsection

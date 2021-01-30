@@ -3,7 +3,7 @@
 @section('title','Lista de parcelas')
 
 @section('content')
-    <table align="center" style="border: 1px solid black">
+    <table class="tablaCRUD">
         <thead>
             <tr>
                 <th>ID</th>
@@ -26,16 +26,13 @@
                     <td>{{ $parcela->anyo_fin }}</td>
                     <td><img style="width: 100px" src="{{ asset('img/parcelas/'.$parcela->imagen) }}" alt="Imagen de la parcela"></td>
                     <td>{{ $parcela->zona_nombre }}</td>
-                    <td><a href="{{ route('parcela.edit',$parcela->id) }}">Modificar</a></td>
-                    <td><a href="{{ route('parcela.destroy',$parcela->id) }}">Eliminar</a></td>
+                    <td><a class="boton modificar" href="{{ route('parcela.edit',$parcela->id) }}">Modificar</a></td>
+                    <td><a class="boton eliminar" href="{{ route('parcela.destroy',$parcela->id) }}">Eliminar</a></td>
                 </tr>
             @endforeach
         </tbody>
-
-        <tr>
-            
-            <td><a href="{{ route('parcela.create') }}">Nueva parcela</a></td>
-        </tr>
-        
     </table>
+
+    <a class="boton nuevo" href="{{ route('parcela.create') }}">Nueva parcela</a>
+
 @endsection
