@@ -24,6 +24,7 @@
         </table>
     </div>
     <div id="content" class="main-content">
+         @yield('tituloAdministracion')
         @yield('content') <!-- Aquí irán las diferentes vistas. Los demás divs se pueden quedar o no -->
     </div>
     <div id="footer">

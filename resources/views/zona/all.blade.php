@@ -1,5 +1,9 @@
 @extends('layouts.master')
 @section('title', 'Lista de zonas')
+
+@section('tituloAdministracion')
+     <h1 class="tituloAdministracion">Administración de zonas</h1>
+@endsection
     
 @section('content')
     <span style="color: red">{{$error ?? ""}}</span>

@@ -1,7 +1,12 @@
 @extends('layouts.master')
 @section('title', 'Lista de usuarios')
-    
+
+@section('tituloAdministracion')
+     <h1 class="tituloAdministracion">Administración de usuarios</h1>
+@endsection
+
 @section('content')
+     
     <table class="tablaCRUD">
         <tr>
             <th>ID</th>

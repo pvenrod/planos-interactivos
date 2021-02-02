@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Parcela;
 use App\Models\Zona;
 use Illuminate\Support\Facades\DB;
+use App\Models\Multimedia;
 
 class ParcelaController extends Controller
 {
@@ -42,7 +43,7 @@ class ParcelaController extends Controller
 
      public function edit($id)
      {
-          $data["parcela"] = Parcela::find($id);
+          $data['parcela'] = Parcela::find($id);
           $data['zonas'] = Zona::all('id','nombre','imagen');
           return view("parcela.form", $data);
      }
@@ -69,16 +70,17 @@ class ParcelaController extends Controller
 
      public function destroy($id)
      {
+          $multimedia = DB::table('multimedia')->where('parcela_id','=',$id)->get();
+          foreach($multimedia as $multi) {
+               $m = Multimedia::find($multi->id);
+               $m->delete();
+          }
           $parcela = Parcela::find($id);
           $parcela->delete();
           return redirect()->route('parcela.index');
      }
 
      
-
-
-
-
 
      public function procesarImagen($imagen, $id_parcela)
      {

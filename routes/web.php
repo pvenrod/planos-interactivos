@@ -45,3 +45,12 @@ Route::post('/zonas/almacenar', 'ZonaController@store')->name("zona.store")->mid
 Route::get('/zonas/editar/{id}','ZonaController@edit')->name('zona.edit')->middleware('userauth');
 Route::post('/zonas/editar/{id}', 'ZonaController@update')->name("zona.update")->middleware('userauth');
 Route::get('/zonas/borrar/{id}','ZonaController@destroy')->name('zona.destroy')->middleware('userauth');
+
+
+// Multimedia ====================================================
+Route::get('/multimedia/{id}','MultimediaController@index')->name('multimedia.index')->middleware('userauth'); // El ID es de la parcela que queremos visualizar su multimedia.
+Route::get('/multimedia/crear/{id}','MultimediaController@create')->name('multimedia.create')->middleware('userauth'); // El ID es de la parcela.
+Route::post('/multimedia/almacenar/{id}','MultimediaController@store')->name('multimedia.store')->middleware('userauth'); // El ID es de la parcela.
+Route::get('/multimedia/editar/{id}','MultimediaController@edit')->name('multimedia.edit')->middleware('userauth');
+Route::post('/multimedia/editar/{id}','MultimediaController@update')->name('multimedia.update')->middleware('userauth');
+Route::get('/multimedia/borrar/{id}','MultimediaController@destroy')->name('multimedia.destroy')->middleware('userauth');

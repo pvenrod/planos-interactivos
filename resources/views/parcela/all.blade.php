@@ -2,6 +2,10 @@
 
 @section('title','Lista de parcelas')
 
+@section('tituloAdministracion')
+     <h1 class="tituloAdministracion">Administración de parcelas</h1>
+@endsection
+
 @section('content')
     <table class="tablaCRUD">
         <thead>
@@ -13,6 +17,7 @@
                 <th>Año de fin</th>
                 <th>Imagen</th>
                 <th>Zona</th>
+                <th colspan="3">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -28,6 +33,7 @@
                     <td>{{ $parcela->zona_nombre }}</td>
                     <td><a class="boton modificar" href="{{ route('parcela.edit',$parcela->id) }}">Modificar</a></td>
                     <td><a class="boton eliminar" href="{{ route('parcela.destroy',$parcela->id) }}">Eliminar</a></td>
+                    <td><a class="boton multimedia" href="{{ route('multimedia.index',$parcela->id) }}">Multimedia</a></td>
                 </tr>
             @endforeach
         </tbody>
