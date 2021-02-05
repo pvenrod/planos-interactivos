@@ -132,6 +132,10 @@ body,h1 {
      background-color: rgb(224, 181, 62);
 }
 
+.visualizar {
+     background-color: rgb(110, 6, 196);
+}
+
 .nuevo {
      background-color: rgb(0, 110, 255);
      font-weight: 700;
@@ -153,6 +157,16 @@ body,h1 {
 .tituloAdministracion {
      display: inline-block;
      position: relative;
+     left: 50%;
+     transform: translateX(-50%);
+}
+
+.zona {
+     width: 500px;
+     height: 500px;
+     border: 1px solid black;
+     position: absolute;
+     top: 300px;
      left: 50%;
      transform: translateX(-50%);
 }

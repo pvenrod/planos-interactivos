@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Zona;
+use App\Models\Parcela;
 
 class ZonaController extends Controller
 {
@@ -16,6 +17,12 @@ class ZonaController extends Controller
      {
           $data["zonas"] = Zona::all();
           return view("zona.all", $data);
+     }
+
+     public function show($id) 
+     {
+          $data["parcelas"] = Parcela::select()->where('zona_id', $id)->get();
+          return view("zona.one", $data);
      }
 
      public function create()

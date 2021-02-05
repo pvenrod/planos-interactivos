@@ -40,6 +40,7 @@ Route::get('/parcelas/borrar/{id}','ParcelaController@destroy')->name('parcela.d
 
 // Zonas ========================================================
 Route::get('/zonas','ZonaController@index')->name("zona.index")->middleware('userauth');
+Route::get('/zonas/{id}','ZonaController@show')->name("zona.show");
 Route::get('/zonas/crear','ZonaController@create')->name('zona.create')->middleware('userauth');
 Route::post('/zonas/almacenar', 'ZonaController@store')->name("zona.store")->middleware('userauth');
 Route::get('/zonas/editar/{id}','ZonaController@edit')->name('zona.edit')->middleware('userauth');
