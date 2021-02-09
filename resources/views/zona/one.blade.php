@@ -6,19 +6,22 @@
 @endsection
     
 @section('content')
-     <input type="range" id="sliderAnyos" step="5" value="2021" onchange="mapear(this.value)">
+     <input type="range" id="sliderAnyos" step="5" value="2021" onchange="mapear(this.value)"><br>
+     <span id="anyoSlider"></span>
 
      <script>
 
           var contador = 0;
           var canvas = [];
-          var canvasantiguos = [];
+          var canvasAntiguos = [];
           var ctx = [];
           var img = [];
           var nombre = []; 
           var anyo_inicio = [];
           var anyo_fin = [];
           var anyo_minimo, anyo_maximo; //Los límites del slider
+          var canvas_width;
+          var canvas_height;
 
           //Con este bucle, guardamos toda la información que nos devuelve el servidor en variables de javascript. De esta manera, podremos montar los planos con puro javascript.
           @foreach ($parcelas as $parcela)
@@ -30,6 +33,7 @@
                imagenIndividual{{$parcela->id}} = new Image();
                imagenIndividual{{$parcela->id}}.src = "{{asset('img/parcelas/'.$parcela->imagen)}}";
 
+
                img.push(imagenIndividual{{$parcela->id}});
 
           @endforeach
@@ -40,34 +44,26 @@
 
           document.getElementById("sliderAnyos").setAttribute("min",anyo_minimo);
           document.getElementById("sliderAnyos").setAttribute("max",anyo_maximo);
-          mapear(2021);
-
+          
+          mapear(2021)
           //Función que dibuja los canvas en función del año seleccionado, el cual se le pasa como parámetro.
           function mapear(anyo_seleccionado) 
           {
-               if (contador!=0) 
-               {
-
-                         for (l=0; l<canvas.length; l++) 
-                         {
-                              canvas[l].remove();
-                         }
-                         document.getElementById("ultCanvas").remove();
-                         
-                    
-               }
-               
+               document.getElementById("anyoSlider").innerHTML = anyo_seleccionado;
                contador++;
                for (i = 0; i < nombre.length; i++) 
                {
                     if (anyo_seleccionado >= anyo_inicio[i] && anyo_seleccionado <= anyo_fin[i]) 
                     {
+                         console.log(anyo_seleccionado + "    " + anyo_inicio[i] + "     " + anyo_fin[i])
                          canvas[i] = document.createElement("canvas");
                          canvas[i].setAttribute("class","zona");
-                         canvas[i].setAttribute("id","canvas"+i);
-                         canvas[i].setAttribute("data-mapa",contador);
-                         canvas[i].width = 500;
-                         canvas[i].height = 500;
+                         canvas[i].setAttribute("id","canvas"+anyo_seleccionado + "_" +i);
+                         canvas[i].setAttribute("data-mapa",""+contador);
+                         canvas[i].width = 500 //img[0].width;
+                         canvas[i].height = 500 //img[0].height;
+
+                         canvasAntiguos.push(canvas[i]);
 
                          ctx[i] = canvas[i].getContext("2d");
 
@@ -82,10 +78,7 @@
                               ctx[i].drawImage(img[i],0,0);
                          }
                     },100)
-
                }
-               
-               
 
                var ultCanvas = document.createElement("canvas");
                ultCanvas.setAttribute("class","zona");
@@ -94,6 +87,26 @@
                ultCanvas.width = 500;
                ultCanvas.height = 500;
                document.getElementById("content").appendChild(ultCanvas);
+
+               //console.log(canvas)
+               setTimeout(function() {
+                    if (canvas[0].dataset.mapa != "1") 
+                    {
+                         var vueltas = canvasAntiguos.length;
+                         for (g=0; g<vueltas; g++) 
+                         {
+                              console.log("Intentando borrar " + canvasAntiguos[g].id)
+                              //console.log(canvasAntiguos[g].id + "     " + canvasAntiguos[g].dataset.mapa);
+                              if (parseInt(canvasAntiguos[g].dataset.mapa) < contador) 
+                              {
+                                   canvasAntiguos[g].remove();
+                              }
+                         }
+                         
+                    }
+               },200)
+               
+               
 
           }
 
@@ -118,5 +131,7 @@
           
 
      </script>
+
+     
 
 @endsection
