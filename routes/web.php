@@ -14,8 +14,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+// Principal ======================================================
+Route::get('/','PrincipalController@index')->name('principal.index');
+Route::get('/sobre-nosotros','PrincipalController@about')->name('principal.about');
+
+
 // Login  ==========================================================
-Route::get('/', 'AuthController@index')->name("auth.index"); // Para cambiar por la vista principal de la aplicación
+Route::get('/auth', 'AuthController@index')->name("auth.index");
 Route::post('/login', 'AuthController@login')->name("auth.login");
 Route::post('/logout', 'AuthController@logout')->name("auth.logout")->middleware('userauth');
 Route::get('/denied','AuthController@denied')->name("auth.denied");  
@@ -40,7 +45,7 @@ Route::get('/parcelas/borrar/{id}','ParcelaController@destroy')->name('parcela.d
 
 // Zonas ========================================================
 Route::get('/zonas','ZonaController@index')->name("zona.index")->middleware('userauth');
-Route::get('/zonas/{id}','ZonaController@show')->name("zona.show");
+Route::get('/zonas/ver/{id}','ZonaController@show')->name("zona.show");
 Route::get('/zonas/crear','ZonaController@create')->name('zona.create')->middleware('userauth');
 Route::post('/zonas/almacenar', 'ZonaController@store')->name("zona.store")->middleware('userauth');
 Route::get('/zonas/editar/{id}','ZonaController@edit')->name('zona.edit')->middleware('userauth');

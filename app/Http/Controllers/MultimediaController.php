@@ -33,7 +33,7 @@ class MultimediaController extends Controller
           $multimedia->save();
           $idMultimedia = Multimedia::latest()->first()->id;
           if ($this->procesarImagen($_FILES['url'], $idMultimedia) == "error") {
-               $data["error"] = "No se ha podido subir la imagen.";
+               $data["error"] = "Formato de archivo incorrecto. Por favor inténtelo de nuevo. Formatos válidos: jpg,png,mp3,wma,mp4,wmv,avi";
                $data['multimedias'] = DB::table('multimedia')->where('multimedia.parcela_id', '=', $id)->get();
                return view("multimedia.all", $data);
           }
@@ -57,7 +57,7 @@ class MultimediaController extends Controller
           $multimedia->save();
 
           if ($this->procesarImagen($_FILES['url'], $r->id) == "error") {
-               $data["error"] = "No se ha podido subir la imagen.";
+               $data["error"] = "Formato de archivo incorrecto. Por favor inténtelo de nuevo. Formatos válidos: jpg,png,mp3,wma,mp4,wmv,avi";
                $data['multimedias'] = DB::table('multimedia')->where('multimedia.parcela_id', '=', $r->id)->get();
                return view("multimedia.all", $data);
           }
@@ -81,13 +81,13 @@ class MultimediaController extends Controller
 
           $imagenBuena = "buena";
           if ($url["error"] != 4) {
-               /*$tipo = $imagen['type'];
-               $tamanyo = $imagen['size'];*/
+               $tamanyo = $url['size'];
                $temp = $url['tmp_name'];
-               /*if (!((strpos($tipo, "jpeg") || (strpos($tipo, "jpg") || strpos($tipo, "png")) && ($tamanyo < 2000000)))) {
+               $nombre = pathinfo($url['name'], PATHINFO_EXTENSION);
+               if (!(($nombre == 'jpg') || ($nombre == 'png') || ($nombre == 'mp3') || ($nombre == 'wma') || ($nombre == 'mp4') || ($nombre == 'avi') || ($nombre == 'wmv') && ($tamanyo < 209715200))) {
                     $imagenBuena = "error";
-               } else {*/
-                    $nombreImagen = $id_multimedia . '.' . pathinfo($url['name'], PATHINFO_EXTENSION);
+               } else {
+                    $nombreImagen = $id_multimedia . '.' . $nombre;
                     if ($subida = move_uploaded_file($temp, 'img/multimedia/' . $nombreImagen)) {
                          $multimedia = Multimedia::find($id_multimedia);
                          $multimedia->url = $nombreImagen;
@@ -95,7 +95,7 @@ class MultimediaController extends Controller
                     } else {
                          $imagenBuena = "error";
                     }
-               /*}*/
+               }
           }
 
           return $imagenBuena;

@@ -6,7 +6,7 @@
 @endsection
     
 @section('content')
-     <input type="range" id="sliderAnyos" step="5" value="2021" onchange="mapear(this.value)"><br>
+     <input type="range" id="sliderAnyos" step="5" value="2021" oninput="mapear(this.value)"><br>
      <span id="anyoSlider"></span>
 
      <script>
@@ -49,6 +49,13 @@
           //Función que dibuja los canvas en función del año seleccionado, el cual se le pasa como parámetro.
           function mapear(anyo_seleccionado) 
           {
+               var tamanyo = canvas.length
+               for (let index = 0; index < tamanyo; index++) {
+                    canvas[index].remove();
+                    canvas.slice(index,1);
+                    
+               }
+               console.log(canvas)
                document.getElementById("anyoSlider").innerHTML = anyo_seleccionado;
                contador++;
                for (i = 0; i < nombre.length; i++) 
@@ -60,6 +67,7 @@
                          canvas[i].setAttribute("class","zona");
                          canvas[i].setAttribute("id","canvas"+anyo_seleccionado + "_" +i);
                          canvas[i].setAttribute("data-mapa",""+contador);
+                         canvas[i].setAttribute("data-nombre",""+nombre[i]);
                          canvas[i].width = 500 //img[0].width;
                          canvas[i].height = 500 //img[0].height;
 
@@ -89,9 +97,10 @@
                document.getElementById("content").appendChild(ultCanvas);
 
                //console.log(canvas)
-               setTimeout(function() {
+               /*setTimeout(function() {
                     if (canvas[0].dataset.mapa != "1") 
                     {
+                         document.getElementById('ultCanvas').remove();
                          var vueltas = canvasAntiguos.length;
                          for (g=0; g<vueltas; g++) 
                          {
@@ -104,7 +113,7 @@
                          }
                          
                     }
-               },200)
+               },200)*/
                
                
 
@@ -121,7 +130,7 @@
 
                     if (ctx[i].getImageData(x, y, canvas[1].width, canvas[1].height).data[3] != 0) {
 
-                         console.log(nombre[i]);
+                         console.log(canvas[i]);
 
                     }
 
