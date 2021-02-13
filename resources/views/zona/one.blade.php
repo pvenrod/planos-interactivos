@@ -6,136 +6,104 @@
 @endsection
     
 @section('content')
-     <input type="range" id="sliderAnyos" step="5" value="2021" oninput="mapear(this.value)"><br>
+     <input type="range" id="sliderAnyos" step="5" oninput="mapear(this.value)"><br>
      <span id="anyoSlider"></span>
 
      <script>
 
+          var parcelas = [];
           var contador = 0;
-          var canvas = [];
-          var canvasAntiguos = [];
-          var ctx = [];
-          var img = [];
-          var nombre = []; 
-          var anyo_inicio = [];
-          var anyo_fin = [];
-          var anyo_minimo, anyo_maximo; //Los límites del slider
-          var canvas_width;
-          var canvas_height;
+          var anyo_minimo = Number.MAX_VALUE;
+          var anyo_maximo = Number.MIN_VALUE;
 
-          //Con este bucle, guardamos toda la información que nos devuelve el servidor en variables de javascript. De esta manera, podremos montar los planos con puro javascript.
+          //Con este bucle, guardamos toda la información que nos devuelve el servidor en objetos de javascript. De esta manera, podremos montar los planos con puro javascript.
+
           @foreach ($parcelas as $parcela)
 
-               nombre.push("{{$parcela->nombre}}");
-               anyo_inicio.push(parseInt("{{$parcela->anyo_inicio}}"));
-               anyo_fin.push(parseInt("{{$parcela->anyo_fin}}"));
+               var parcela{{$parcela->id}} = new Object();
+               parcela{{$parcela->id}}.id = {{$parcela->id}};
+               parcela{{$parcela->id}}.nombre = "{{$parcela->nombre}}";
+               parcela{{$parcela->id}}.anyo_inicio = {{$parcela->anyo_inicio}};
+               parcela{{$parcela->id}}.anyo_fin = {{$parcela->anyo_fin}};
+               parcela{{$parcela->id}}.imagen = new Image();
+               parcela{{$parcela->id}}.imagen.src = "{{asset('img/parcelas/'.$parcela->imagen)}}";
+               parcela{{$parcela->id}}.canvas = document.createElement("canvas");
+               parcela{{$parcela->id}}.ctx = parcela{{$parcela->id}}.canvas.getContext("2d");
 
-               imagenIndividual{{$parcela->id}} = new Image();
-               imagenIndividual{{$parcela->id}}.src = "{{asset('img/parcelas/'.$parcela->imagen)}}";
-
-
-               img.push(imagenIndividual{{$parcela->id}});
+               parcelas.push(parcela{{$parcela->id}});
 
           @endforeach
 
-          // Los tres puntos "desempaquetan" el array, ya que los métodos max y min de la clase Math no funcionan con arrays.
-          anyo_minimo = Math.min(...anyo_inicio);
-          anyo_maximo = Math.max(...anyo_fin);
+          for (i=0; i<parcelas.length; i++) {
+               if (parcelas[i].anyo_inicio < anyo_minimo)
+                    anyo_minimo = parcelas[i].anyo_inicio;
+               if (parcelas[i].anyo_fin > anyo_maximo)
+                    anyo_maximo = parcelas[i].anyo_fin;
+          }
 
           document.getElementById("sliderAnyos").setAttribute("min",anyo_minimo);
           document.getElementById("sliderAnyos").setAttribute("max",anyo_maximo);
+          document.getElementById("sliderAnyos").setAttribute("value",anyo_maximo);
           
-          mapear(2021)
+          setTimeout(function() {
+               mapear(2021);
+          },100)
+
+
           //Función que dibuja los canvas en función del año seleccionado, el cual se le pasa como parámetro.
           function mapear(anyo_seleccionado) 
           {
-               var tamanyo = canvas.length
-               for (let index = 0; index < tamanyo; index++) {
-                    canvas[index].remove();
-                    canvas.slice(index,1);
-                    
-               }
-               console.log(canvas)
+               if (contador>0)
+                    document.getElementById("ultCanvas").remove();
+
                document.getElementById("anyoSlider").innerHTML = anyo_seleccionado;
                contador++;
-               for (i = 0; i < nombre.length; i++) 
+
+               for (i=0; i<parcelas.length; i++) 
                {
-                    if (anyo_seleccionado >= anyo_inicio[i] && anyo_seleccionado <= anyo_fin[i]) 
+                    parcelas[i].ctx.clearRect(0, 0, parcelas[i].canvas.width, parcelas[i].canvas.height);
+
+                    if (anyo_seleccionado >= parcelas[i].anyo_inicio && anyo_seleccionado <= parcelas[i].anyo_fin) 
                     {
-                         console.log(anyo_seleccionado + "    " + anyo_inicio[i] + "     " + anyo_fin[i])
-                         canvas[i] = document.createElement("canvas");
-                         canvas[i].setAttribute("class","zona");
-                         canvas[i].setAttribute("id","canvas"+anyo_seleccionado + "_" +i);
-                         canvas[i].setAttribute("data-mapa",""+contador);
-                         canvas[i].setAttribute("data-nombre",""+nombre[i]);
-                         canvas[i].width = 500 //img[0].width;
-                         canvas[i].height = 500 //img[0].height;
+                         parcelas[i].canvas.setAttribute("class","zona");
+                         parcelas[i].canvas.setAttribute("id","canvas"+anyo_seleccionado + "_" +i);
+                         parcelas[i].canvas.setAttribute("data-numeroMapa",""+contador);
+                         parcelas[i].canvas.setAttribute("data-nombre",""+parcelas[i].nombre);
+                         parcelas[i].canvas.width = parcelas[i].imagen.width;
+                         parcelas[i].canvas.height = parcelas[i].imagen.height;
 
-                         canvasAntiguos.push(canvas[i]);
+                         parcelas[i].ctx.drawImage(parcelas[i].imagen,0,0);
 
-                         ctx[i] = canvas[i].getContext("2d");
-
-                         document.getElementById("content").appendChild(canvas[i]);
-
+                         document.getElementById("content").appendChild(parcelas[i].canvas);
                     }
-
-                    setTimeout(function() 
-                    {
-                         for (i = 0; i < nombre.length; i++) 
-                         {
-                              ctx[i].drawImage(img[i],0,0);
-                         }
-                    },100)
                }
 
                var ultCanvas = document.createElement("canvas");
                ultCanvas.setAttribute("class","zona");
                ultCanvas.setAttribute("id","ultCanvas");
                ultCanvas.setAttribute("onclick","verificarClick(event)");
-               ultCanvas.width = 500;
-               ultCanvas.height = 500;
+               ultCanvas.width = parcelas[0].imagen.width;
+               ultCanvas.height = parcelas[0].imagen.width;
                document.getElementById("content").appendChild(ultCanvas);
-
-               //console.log(canvas)
-               /*setTimeout(function() {
-                    if (canvas[0].dataset.mapa != "1") 
-                    {
-                         document.getElementById('ultCanvas').remove();
-                         var vueltas = canvasAntiguos.length;
-                         for (g=0; g<vueltas; g++) 
-                         {
-                              console.log("Intentando borrar " + canvasAntiguos[g].id)
-                              //console.log(canvasAntiguos[g].id + "     " + canvasAntiguos[g].dataset.mapa);
-                              if (parseInt(canvasAntiguos[g].dataset.mapa) < contador) 
-                              {
-                                   canvasAntiguos[g].remove();
-                              }
-                         }
-                         
-                    }
-               },200)*/
                
-               
-
           }
+
 
           // Función encargada de saber si el click se ha hecho en un canvas o en otro.
           function verificarClick(event) {
 
-               var rect = canvas[1].getBoundingClientRect(); 
+               var rect = parcelas[1].canvas.getBoundingClientRect(); 
                var x = event.x - rect.left;
                var y = event.y - rect.top;
 
-               for (i=0; i<canvas.length; i++) {
+               for (i=0; i<parcelas.length; i++) 
+               {
+                    if (parcelas[i].ctx.getImageData(x, y, parcelas[i].canvas.width, parcelas[i].canvas.height).data[3] != 0) {
 
-                    if (ctx[i].getImageData(x, y, canvas[1].width, canvas[1].height).data[3] != 0) {
-
-                         console.log(canvas[i]);
+                         console.log(parcelas[i].nombre);
 
                     }
-
                }
-
           }
           
 
