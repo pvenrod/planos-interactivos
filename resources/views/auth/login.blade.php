@@ -4,11 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.jpg">
 
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-theme.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontAwesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/light-box.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/templatemo-style.css') }}">
+
+    <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+    <script src="{{ asset('js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
     <style>
-    * {
-        font-family: Arial;
-    }
+          * {
+            font-family: 'Kanit', sans-serif;
+          }
         .bodyLogin {
             margin:0; 
             color: white;
@@ -18,9 +30,10 @@
             height: 100vh; 
             position: absolute; 
             z-index: -9999;
-            background-image: url('{{asset("img/almeria.jpg")}}');
+            background-image: url('{{asset("img/principal/almeria.jpg")}}');
             background-repeat: no-repeat;
             background-size: 100vw 100vh;
+            background-size: cover;
 
         }
         .fondo_negro {

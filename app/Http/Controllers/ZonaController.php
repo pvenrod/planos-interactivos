@@ -22,6 +22,7 @@ class ZonaController extends Controller
      public function show($id) 
      {
           $data["parcelas"] = Parcela::select()->where('zona_id', $id)->get();
+          $data["zona"] = Zona::find($id);
           return view("zona.one", $data);
      }
 
