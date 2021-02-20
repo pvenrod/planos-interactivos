@@ -90,9 +90,7 @@ https://templatemo.com/tm-520-highway
 
 
       <!-- Modal button -->
-    <div class="popup-icon">
-      <button id="modBtn" class="modal-btn"><img src="{{ asset('img/principal/contact-icon.png') }}" alt=""></button>
-    </div>  
+    
 
     <!-- Modal -->
     <div id="modal" class="modal">
