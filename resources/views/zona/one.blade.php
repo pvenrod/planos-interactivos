@@ -19,9 +19,13 @@
      <script>
                
           var parcelas = [];
+          var multimedias = [];
           var contador = 0;
           var anyo_minimo = Number.MAX_VALUE;
           var anyo_maximo = Number.MIN_VALUE;
+          var botonAudio;
+          var botonVideo;
+          var botonImagen;
 
           $(document).ready(function() {
      
@@ -38,9 +42,31 @@
                     parcela{{$parcela->id}}.imagen.src = "{{asset('img/parcelas/'.$parcela->imagen)}}";
                     parcela{{$parcela->id}}.canvas = document.createElement("canvas");
                     parcela{{$parcela->id}}.ctx = parcela{{$parcela->id}}.canvas.getContext("2d");
+                    parcela{{ $parcela->id }}.multimedia = [];
      
                     parcelas.push(parcela{{$parcela->id}});
      
+               @endforeach
+
+               @foreach ($multimedias as $multimedia)
+                    var multimedia{{ $multimedia->id }} = new Object();
+                    multimedia{{ $multimedia->id }}.id = {{ $multimedia->id }};
+                    @switch($multimedia->tipo)
+                        @case('audio')
+                            multimedia{{ $multimedia->id }}.url = document.createElement('audio')
+                            @break;
+                        @case('video')
+                            multimedia{{ $multimedia->id }}.url = document.createElement('video')
+                            @break;
+                        @case('imagen')
+                            multimedia{{ $multimedia->id }}.url = document.createElement('img')
+                            @break;
+                    @endswitch
+                    multimedia{{ $multimedia->id }}.url.setAttribute('src',"{{asset('img/multimedia/'.$multimedia->url)}}")
+                    
+                    multimedia{{ $multimedia->id }}.parcela_id = {{ $multimedia->parcela_id }};
+                    multimedia{{ $multimedia->id }}.tipo = '{{ $multimedia->tipo }}';
+                    multimedias.push(multimedia{{ $multimedia->id }})
                @endforeach
      
                for (i=0; i<parcelas.length; i++) {
@@ -49,10 +75,18 @@
                     if (parcelas[i].anyo_fin > anyo_maximo)
                          anyo_maximo = parcelas[i].anyo_fin;
                }
+
+               for (let i = 0; i < parcelas.length; i++) {
+                   for (let j = 0; j < multimedias.length; j++) {
+                       if (parcelas[i].id == multimedias[j].parcela_id) {
+                           parcelas[i].multimedia.push(multimedias[j])
+                       }
+                   }
+               }
      
-               document.getElementById("sliderAnyos").setAttribute("min",anyo_minimo);
-               document.getElementById("sliderAnyos").setAttribute("max",anyo_maximo);
-               document.getElementById("sliderAnyos").setAttribute("value",anyo_maximo);
+               $('#sliderAnyos').attr('min',anyo_minimo);
+               $('#sliderAnyos').attr('max',anyo_maximo);
+               $('#sliderAnyos').attr('value',anyo_maximo);
                
                setTimeout(function() {
                     mapear(2021);
@@ -64,15 +98,17 @@
      
      
                // Función encargada de saber si el click se ha hecho en un canvas o en otro.
+                botonAudio = document.getElementById('audio');
+                botonVideo = document.getElementById('video');
+                botonImagen = document.getElementById('imagen');
                
           })
 
           function mapear(anyo_seleccionado) 
           {
                if (contador>0)
-                    document.getElementById("ultCanvas").remove();
-
-               document.getElementById("anyoSlider").innerHTML = anyo_seleccionado;
+                    $('#ultCanvas').remove();
+               $('#anyoSlider').html(anyo_seleccionado);
                contador++;
 
                for (i=0; i<parcelas.length; i++) 
@@ -106,199 +142,80 @@
                $(".pergamino").css("height",parcelas[0].imagen.height+150)
                $("#aquiVanLosCanvas").css("width",parcelas[0].imagen.width)
                $("#aquiVanLosCanvas").css("height",parcelas[0].imagen.height)
-          }
 
+
+               $('#audio').removeClass('imagenRellena');
+               $('#video').removeClass('imagenRellena');
+               $('#imagen').removeClass('imagenRellena');
+          }
           function verificarClick(event) 
           {
-               var rect = parcelas[1].canvas.getBoundingClientRect(); 
+               var rect = parcelas[0].canvas.getBoundingClientRect(); 
                var x = event.x - rect.left;
                var y = event.y - rect.top;
+
+               var audioRelleno = false;
+               var videoRelleno = false;
+               var imagenRelleno = false;
 
                for (i=0; i<parcelas.length; i++) 
                {
                     if (parcelas[i].ctx.getImageData(x, y, parcelas[i].canvas.width, parcelas[i].canvas.height).data[3] != 0) {
 
-                         console.log(parcelas[i].nombre);
+                        console.log(parcelas[i].nombre);
+                        for (let j = 0; j < parcelas[i].multimedia.length; j++) {
+                            if (parcelas[i].multimedia[j].tipo == 'audio' && !audioRelleno) {
+                                audioRelleno = true;
+                                $('#audio').addClass('imagenRellena');
+                                $('#audio').attr('data-parcela',parcelas[i].id)
+                            } else if (parcelas[i].multimedia[j].tipo == 'video' && !videoRelleno) {
+                                videoRelleno = true;
+                                $('#video').addClass('imagenRellena');
+                                $('#video').attr('data-parcela',parcelas[i].id)
+                            } else if (parcelas[i].multimedia[j].tipo == 'imagen' && !imagenRelleno) {
+                                imagenRelleno = true;
+                                $('#imagen').addClass('imagenRellena');
+                                $('#imagen').attr('data-parcela',parcelas[i].id)
+                            }
+                        }
 
                     }
                }
+
+                /*for (let i = 0; i < parcelas[data-parcela].multimedia.length; i++) {
+                   HAY QUE RECORRER TODAS LAS PARCELAS PARA SABER CUAL TIENE EL ID DATA-PARCELA
+               }*/
           }
 
      </script>
 
      <style>
-          .fondo_imagen {
-               width: 100vw; 
-               height: 100vh; 
-               position: absolute; 
-               z-index: -9999;
-               background-image: url('{{asset("img/principal/almeria.jpg")}}');
-               background-repeat: no-repeat;
-               background-size: cover;
-               top: 0;
+        .pergamino {
+            background-image: url('{{asset("img/zonas/pergamino.png")}}');
+            background-repeat: no-repeat;
+            display: inline-flex;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background-size: 100% 100%;
+            margin-top: 100px;
+        }
 
-          }
-          .fondo_negro {
-               width: 100vw; 
-               height: 100vh; 
-               background-color: black; 
-               position: absolute; 
-               z-index: -9998;
-               opacity: 0.8;
-               top: 0;
-          }
-          body {
-               margin: 0;
-               color: white;
-          }
-          .lateral {
-               padding-left: 80px;
-               padding-right: 30px;
-               text-align: center;
-          }
-          .imagenMultimedia {
-               font-size: 50px;
-          }
-          .imagenVacia {
-               color: black;
-               text-shadow: 0px 0px 3px white,0px 0px 3px white,0px 0px 3px white,0px 0px 3px white,0px 0px 3px white,0px 0px 3px white;
-          }
-          .imagenRellena {
-               color: black;
-               text-shadow: 0px 0px 30px gold,0px 0px 30px gold,0px 0px 30px gold;
-               transition: 0.5s;
-          }
-          .imagenRellena:hover {
-               text-shadow: 0px 0px 30px gold,0px 0px 30px gold,0px 0px 30px gold,0px 0px 30px gold;
-               cursor: pointer;
-          }
-          .tablaGeneral {
-               position: relative; 
-               left: 50%; 
-               transform: translateX(-50%); 
-               padding: 30px;
-               width: auto;
-               top: 75px;
-               border-collapse: collapse;
-          }
-          #aquiVanLosCanvas {
-               position: relative;
-          }
-          .pergamino {
-               background-image: url('{{asset("img/zonas/pergamino.png")}}');
-               background-repeat: no-repeat;
-               display: inline-flex;
-               position: absolute;
-               left: 50%;
-               transform: translateX(-50%);
-               background-size: 100% 100%;
-               margin-top: 100px;
-          }
-          input[type=range] {
-               width: 100%;
-               margin: 11.2px 0;
-               background-color: transparent;
-               -webkit-appearance: none;
-               margin-top: 100px;
-          }
-          input[type=range]:focus {
-               outline: none;
-          }
-          input[type=range]::-webkit-slider-runnable-track {
-               background: #ffb100;
-               border: 0;
-               border-radius: 24.6px;
-               width: 100%;
-               height: 7.6px;
-               cursor: pointer;
-          }
-          input[type=range]::-webkit-slider-thumb {
-               margin-top: -11.2px;
-               width: 30px;
-               height: 30px;
-               background: #000000;
-               border: 3.9px solid #ffffff;
-               border-radius: 50px;
-               cursor: pointer;
-               -webkit-appearance: none;
-          }
-          input[type=range]:focus::-webkit-slider-runnable-track {
-               background: #ffb60f;
-          }
-          input[type=range]::-moz-range-track {
-               background: #ffb100;
-               border: 0;
-               border-radius: 24.6px;
-               width: 100%;
-               height: 7.6px;
-               cursor: pointer;
-          }
-          input[type=range]::-moz-range-thumb {
-               width: 30px;
-               height: 30px;
-               background: #000000;
-               border: 3.9px solid #ffffff;
-               border-radius: 50px;
-               cursor: pointer;
-          }
-          input[type=range]::-ms-track {
-               background: transparent;
-               border-color: transparent;
-               border-width: 11.2px 0;
-               color: transparent;
-               width: 100%;
-               height: 7.6px;
-               cursor: pointer;
-          }
-          input[type=range]::-ms-fill-lower {
-               background: #f0a600;
-               border: 0;
-               border-radius: 49.2px;
-          }
-          input[type=range]::-ms-fill-upper {
-               background: #ffb100;
-               border: 0;
-               border-radius: 49.2px;
-          }
-          input[type=range]::-ms-thumb {
-               width: 30px;
-               height: 30px;
-               background: #000000;
-               border: 3.9px solid #ffffff;
-               border-radius: 50px;
-               cursor: pointer;
-               margin-top: 0px;
-               /*Needed to keep the Edge thumb centred*/
-          }
-          input[type=range]:focus::-ms-fill-lower {
-               background: #ffb100;
-          }
-          input[type=range]:focus::-ms-fill-upper {
-               background: #ffb60f;
-          }
-          .tituloZona {
-               font-size: 30px;
-               font-family: 'Kanit';
-               display: inline-block;
-               left: 50%;
-               transform: translateX(-50%);
-               position: relative;
-               margin-top: 20px;
-          }
-          /*TODO: Use one of the selectors from https://stackoverflow.com/a/20541859/7077589 and figure out
-          how to remove the virtical space around the range input in IE*/
-          @supports (-ms-ime-align:auto) {
-               /* Pre-Chromium Edge only styles, selector taken from hhttps://stackoverflow.com/a/32202953/7077589 */
-               input[type=range] {
-                    margin: 0;
-                    /*Edge starts the margin from the thumb, not the track as other browsers do*/
-               }
-          }
+        .fondo_imagen {
+            width: 100vw; 
+            height: 100vh; 
+            position: absolute; 
+            z-index: -9999;
+            background-image: url('{{asset("img/principal/almeria.jpg")}}');
+            background-repeat: no-repeat;
+            background-size: cover;
+            top: 0;
+        }
 
      </style>
      <title>{{$zona->nombre}}</title>
 </head>
-<body>
+<body class="plano">
      <div id="content" style="height: 100vh">
           <a href="{{route('principal.index')}}">
                <img src="{{asset('img/principal/prev.png')}}" class="prev">
@@ -315,17 +232,17 @@
                               </div>
                          </td>
                          <td class="lateral">
-                              <i class="fa fa-video-camera imagenMultimedia imagenRellena" aria-hidden="true"></i>
+                              <i id="video" class="fa fa-video-camera imagenMultimedia imagenVacia " aria-hidden="true"></i>
                          </td>
                     </tr>
                     <tr>
                          <td class="lateral">
-                              <i class="fa fa-camera imagenMultimedia imagenVacia" aria-hidden="true"></i>
+                              <i id="imagen" class="fa fa-camera imagenMultimedia imagenVacia" aria-hidden="true"></i>
                          </td>
                     </tr>
                     <tr>
                          <td class="lateral">
-                              <i class="fa fa-microphone imagenMultimedia imagenVacia" aria-hidden="true"></i>
+                              <i id="audio" class="fa fa-microphone imagenMultimedia imagenVacia" aria-hidden="true"></i>
                          </td>
                     </tr>
                     <tr>
@@ -337,5 +254,9 @@
                </table>
           </div>
      </div>
+
+     @php
+      var_dump($multimedias)   
+     @endphp
 </body>
 </html>

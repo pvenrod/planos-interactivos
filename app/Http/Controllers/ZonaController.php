@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Zona;
 use App\Models\Parcela;
+use Illuminate\Support\Facades\DB;
 
 class ZonaController extends Controller
 {
@@ -23,6 +24,7 @@ class ZonaController extends Controller
      {
           $data["parcelas"] = Parcela::select()->where('zona_id', $id)->get();
           $data["zona"] = Zona::find($id);
+          $data['multimedias'] = DB::table('multimedia')->join('parcelas','multimedia.parcela_id','=','parcelas.id')->join('zonas','zonas.id','=','parcelas.zona_id')->select('multimedia.*')->where('zonas.id','=',$id)->get();
           return view("zona.one", $data);
      }
 
