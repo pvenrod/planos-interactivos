@@ -28,6 +28,14 @@
           var botonImagen;
 
           $(document).ready(function() {
+
+               setTimeout(function() {
+                    $(".fondoLogo").slideUp(200);
+               },2500)
+
+               setTimeout(function() {
+                    $("body").css("overflow-y","scroll");
+               },2700)
      
                //Con este bucle, guardamos toda la información que nos devuelve el servidor en objetos de javascript. De esta manera, podremos montar los planos con puro javascript.
      
@@ -89,8 +97,12 @@
                $('#sliderAnyos').attr('value',anyo_maximo);
                
                setTimeout(function() {
+                    mapear($("#sliderAnyos").attr("min"));
+               },1000)
+
+               setTimeout(function() {
                     mapear(2021);
-               },100)
+               },1500)
      
      
                //Función que dibuja los canvas en función del año seleccionado, el cual se le pasa como parámetro.
@@ -150,6 +162,10 @@
           }
           function verificarClick(event) 
           {
+               $('#audio').removeClass('imagenRellena');
+               $('#video').removeClass('imagenRellena');
+               $('#imagen').removeClass('imagenRellena');
+
                var rect = parcelas[0].canvas.getBoundingClientRect(); 
                var x = event.x - rect.left;
                var y = event.y - rect.top;
@@ -187,35 +203,25 @@
                }*/
           }
 
+
+
      </script>
-
      <style>
-        .pergamino {
-            background-image: url('{{asset("img/zonas/pergamino.png")}}');
-            background-repeat: no-repeat;
-            display: inline-flex;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            background-size: 100% 100%;
-            margin-top: 100px;
-        }
-
-        .fondo_imagen {
-            width: 100vw; 
-            height: 100vh; 
-            position: absolute; 
-            z-index: -9999;
-            background-image: url('{{asset("img/principal/almeria.jpg")}}');
-            background-repeat: no-repeat;
-            background-size: cover;
-            top: 0;
-        }
+     
 
      </style>
+
      <title>{{$zona->nombre}}</title>
 </head>
-<body class="plano">
+<body class="plano" style="overflow:hidden">
+     <div class="fondoLogo">
+          <div class="logo">
+               <div class="logo__inner"></div>
+               <div class="logo__text">LOADING</div>
+          </div>
+     </div>
+
+     
      <div id="content" style="height: 100vh">
           <a href="{{route('principal.index')}}">
                <img src="{{asset('img/principal/prev.png')}}" class="prev">
@@ -254,9 +260,4 @@
                </table>
           </div>
      </div>
-
-     @php
-      var_dump($multimedias)   
-     @endphp
-</body>
 </html>

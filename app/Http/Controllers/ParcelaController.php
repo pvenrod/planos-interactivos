@@ -12,7 +12,7 @@ class ParcelaController extends Controller
 {
     public function index() 
     {
-        $data['parcelas'] = DB::table('parcelas')->join('zonas','parcelas.zona_id','=','zonas.id')->select('parcelas.*','zonas.nombre as zona_nombre')->get();
+        $data['parcelas'] = DB::table('parcelas')->leftjoin('zonas','parcelas.zona_id','=','zonas.id')->select('parcelas.*','zonas.nombre as zona_nombre')->get();
 
         return view('parcela.all',$data);
     }

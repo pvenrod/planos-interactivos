@@ -60,7 +60,7 @@ https://templatemo.com/tm-520-highway
              @foreach ($zonas as $zona)
                <div class="col-md-4 col-sm-6">
                     <div class="portfolio-item">
-                         <a href="{{ route('zona.show',$zona->id) }}" data-lightbox="image-1"><div class="thumb">
+                         <a href="{{ route('zona.show',$zona->id) }}"><div class="thumb">
                               <div class="hover-effect">
                                    <div class="hover-content">
                                         <h1>{{ $zona->nombre }}</h1>
