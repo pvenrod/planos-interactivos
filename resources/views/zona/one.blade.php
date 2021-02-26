@@ -16,6 +16,7 @@
 
      <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
      <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
+
      <script>
                
           var parcelas = [];
@@ -44,6 +45,7 @@
                     var parcela{{$parcela->id}} = new Object();
                     parcela{{$parcela->id}}.id = {{$parcela->id}};
                     parcela{{$parcela->id}}.nombre = "{{$parcela->nombre}}";
+                    parcela{{$parcela->id}}.descripcion = "{{$parcela->descripcion}}";
                     parcela{{$parcela->id}}.anyo_inicio = {{$parcela->anyo_inicio}};
                     parcela{{$parcela->id}}.anyo_fin = {{$parcela->anyo_fin}};
                     parcela{{$parcela->id}}.imagen = new Image();
@@ -118,6 +120,7 @@
 
           function mapear(anyo_seleccionado) 
           {
+               $("#popup").slideUp(150);
                if (contador>0)
                     $('#ultCanvas').remove();
                $('#anyoSlider').html(anyo_seleccionado);
@@ -160,6 +163,7 @@
                $('#video').removeClass('imagenRellena');
                $('#imagen').removeClass('imagenRellena');
           }
+
           function verificarClick(event) 
           {
                $('#audio').removeClass('imagenRellena');
@@ -178,6 +182,16 @@
                {
                     if (parcelas[i].ctx.getImageData(x, y, parcelas[i].canvas.width, parcelas[i].canvas.height).data[3] != 0) {
 
+                         //Modificamos la información de popup
+                         $("#popup .titulo").html(parcelas[i].nombre)
+                         $("#popup .descripcion").html(parcelas[i].descripcion)
+
+                         //Mostramos el popup
+                         $("#popup").slideDown(150);
+                         $("#popup").css("left",event.x)
+                         $("#popup").css("top",event.y+10)
+
+
                         console.log(parcelas[i].nombre);
                         for (let j = 0; j < parcelas[i].multimedia.length; j++) {
                             if (parcelas[i].multimedia[j].tipo == 'audio' && !audioRelleno) {
@@ -191,7 +205,8 @@
                             } else if (parcelas[i].multimedia[j].tipo == 'imagen' && !imagenRelleno) {
                                 imagenRelleno = true;
                                 $('#imagen').addClass('imagenRellena');
-                                $('#imagen').attr('data-parcela',parcelas[i].id)
+                                $('#imagen').attr('data-parcela',parcelas[i].id);
+                                $('#imagen').attr('onclick','sacarImgParcela(this.dataset.parcela)');
                             }
                         }
 
@@ -201,6 +216,33 @@
                 /*for (let i = 0; i < parcelas[data-parcela].multimedia.length; i++) {
                    HAY QUE RECORRER TODAS LAS PARCELAS PARA SABER CUAL TIENE EL ID DATA-PARCELA
                }*/
+          }
+
+
+          function sacarImgParcela(id) {
+
+               $("#popup").slideUp(200);
+               $("#modal").html('<div id="cerrarPopup" onclick="$(\'#modal\').fadeOut(200); $(\'#fondo\').fadeOut(200);"> \
+                                   <div id="equis" class="equis1"></div> \
+                                   <div id="equis" class="equis2"></div> \
+                                 </div>')
+
+               for (i=0; i<parcelas.length; i++) 
+               {
+                    if (parcelas[i].id == id) 
+                    {
+                         for (j=0; j<parcelas[i].multimedia.length; j++) 
+                         {
+                              if (parcelas[i].multimedia[j].tipo == "imagen") 
+                              {
+                                   $("#modal").html($("#modal").html() + "<div class='imgMulti'><img src='" + parcelas[i].multimedia[j].url.src + "'></div>")
+                              }
+                         }
+                    }
+               }
+
+               $("#fondo").fadeIn(200);
+               $("#modal").fadeIn(200);
           }
 
 
@@ -214,6 +256,24 @@
      <title>{{$zona->nombre}}</title>
 </head>
 <body class="plano" style="overflow:hidden">
+
+     <div id="fondo"></div>
+     <div id="modal">
+          
+     </div>
+
+     <div id="popup">
+          <div id="pestanyitaPopup"></div>
+          <div id="cerrarPopup" onclick="$('#popup').slideUp(100)">
+               <div id="equis" class="equis1"></div>
+               <div id="equis" class="equis2"></div>
+          </div>
+          <div class="titulo"></div>
+          <div class="descripcion"></div>
+     </div>
+
+
+
      <div class="fondoLogo">
           <div class="logo">
                <div class="logo__inner"></div>
