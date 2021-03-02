@@ -198,6 +198,7 @@
                                 audioRelleno = true;
                                 $('#audio').addClass('imagenRellena');
                                 $('#audio').attr('data-parcela',parcelas[i].id)
+                                $('#audio').attr('onclick','sacarAudioParcela(this.dataset.parcela)');
                             } else if (parcelas[i].multimedia[j].tipo == 'video' && !videoRelleno) {
                                 videoRelleno = true;
                                 $('#video').addClass('imagenRellena');
@@ -218,6 +219,38 @@
                }*/
           }
 
+          function ponerImagen(ruta) {
+              //$("#modalImg").style('background-image','url("../img/multimedia/'+ ruta +'")');
+              $("#modalImg").fadeIn(200);
+
+          }
+
+          /*function sacarAudioParcela(id) {
+
+            $("#popup").slideUp(200);
+            $("#modal").html('<div id="cerrarPopup" onclick="$('#modal').fadeOut(200); $('#fondo').fadeOut(200);"> \
+                                <div id="equis" class="equis1"></div> \
+                                <div id="equis" class="equis2"></div> \
+                        </div>')
+
+            for (i=0; i<parcelas.length; i++) 
+            {
+                if (parcelas[i].id == id) 
+                {
+                    for (j=0; j<parcelas[i].multimedia.length; j++) 
+                    {
+                        if (parcelas[i].multimedia[j].tipo == "audio") 
+                        {
+                                $("#modal").html($("#modal").html() + "<audio style='margin-top: 10px; width: 100%; outline: none;' src='" + parcelas[i].multimedia[j].url.src + "' controls>")
+                        }
+                    }
+                }
+            }
+
+            $("#fondo").fadeIn(200);
+            $("#modal").fadeIn(200);
+            }*/
+
 
           function sacarImgParcela(id) {
 
@@ -235,7 +268,11 @@
                          {
                               if (parcelas[i].multimedia[j].tipo == "imagen") 
                               {
-                                   $("#modal").html($("#modal").html() + "<div class='imgMulti'><img src='" + parcelas[i].multimedia[j].url.src + "'></div>")
+                                   $("#modal").html($("#modal").html() + "<div class='imgMulti'><img src='" + parcelas[i].multimedia[j].url.src + "' onclick='ponerImagen("+ parcelas[i].multimedia[j].id +")'></div>")
+                              }
+                              else if (parcelas[i].multimedia[j].tipo == "audio")
+                              {
+                                  $("#modal").html($("#modal").html() + "<div class='audioMulti'></div>")
                               }
                          }
                     }
@@ -260,6 +297,10 @@
      <div id="fondo"></div>
      <div id="modal">
           
+     </div>
+
+     <div id="modalImg">
+
      </div>
 
      <div id="popup">

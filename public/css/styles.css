@@ -254,6 +254,17 @@ body,h1 {
      height: 100%;
 }
 
+#modalImg {
+    z-index: 1001;
+    padding: 20px;
+    display: none;
+    width: 700px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+
 .fondo_negro {
     width: 100vw; 
     height: 100vh; 
