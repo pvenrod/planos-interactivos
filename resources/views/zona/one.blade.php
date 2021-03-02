@@ -160,15 +160,21 @@
 
 
                $('#audio').removeClass('imagenRellena');
+               $('#audio').attr('onclick','');
                $('#video').removeClass('imagenRellena');
+               $('#video').attr('onclick','');
                $('#imagen').removeClass('imagenRellena');
+               $('#imagen').attr('onclick','');
           }
 
           function verificarClick(event) 
           {
                $('#audio').removeClass('imagenRellena');
+               $('#audio').attr('onclick','');
                $('#video').removeClass('imagenRellena');
+               $('#video').attr('onclick','');
                $('#imagen').removeClass('imagenRellena');
+               $('#imagen').attr('onclick','');
 
                var rect = parcelas[0].canvas.getBoundingClientRect(); 
                var x = event.x - rect.left;
@@ -219,43 +225,38 @@
                }*/
           }
 
-          function ponerImagen(ruta) {
-              //$("#modalImg").style('background-image','url("../img/multimedia/'+ ruta +'")');
-              $("#modalImg").fadeIn(200);
 
-          }
+          function sacarAudioParcela(id) 
+          {
+               $("#popup").slideUp(200);
+               $("#modal").html('<div id="cerrarPopup" onclick="cerrarModal()"> \
+                                   <div id="equis" class="equis1"></div> \
+                                   <div id="equis" class="equis2"></div> \
+                         </div>')
 
-          /*function sacarAudioParcela(id) {
-
-            $("#popup").slideUp(200);
-            $("#modal").html('<div id="cerrarPopup" onclick="$('#modal').fadeOut(200); $('#fondo').fadeOut(200);"> \
-                                <div id="equis" class="equis1"></div> \
-                                <div id="equis" class="equis2"></div> \
-                        </div>')
-
-            for (i=0; i<parcelas.length; i++) 
-            {
-                if (parcelas[i].id == id) 
-                {
-                    for (j=0; j<parcelas[i].multimedia.length; j++) 
+               for (i=0; i<parcelas.length; i++) 
+               {
+                    if (parcelas[i].id == id) 
                     {
-                        if (parcelas[i].multimedia[j].tipo == "audio") 
-                        {
-                                $("#modal").html($("#modal").html() + "<audio style='margin-top: 10px; width: 100%; outline: none;' src='" + parcelas[i].multimedia[j].url.src + "' controls>")
-                        }
+                         for (j=0; j<parcelas[i].multimedia.length; j++) 
+                         {
+                         if (parcelas[i].multimedia[j].tipo == "audio") 
+                         {
+                                   $("#modal").html($("#modal").html() + "<audio style='margin-top: 10px; width: 100%; outline: none;' src='" + parcelas[i].multimedia[j].url.src + "' controls>")
+                         }
+                         }
                     }
-                }
+               }
+
+               $("#fondo").fadeIn(200);
+               $("#modal").fadeIn(200);
             }
 
-            $("#fondo").fadeIn(200);
-            $("#modal").fadeIn(200);
-            }*/
 
-
-          function sacarImgParcela(id) {
-
+          function sacarImgParcela(id) 
+          {
                $("#popup").slideUp(200);
-               $("#modal").html('<div id="cerrarPopup" onclick="$(\'#modal\').fadeOut(200); $(\'#fondo\').fadeOut(200);"> \
+               $("#modal").html('<div id="cerrarPopup" onclick="cerrarModal()"> \
                                    <div id="equis" class="equis1"></div> \
                                    <div id="equis" class="equis2"></div> \
                                  </div>')
@@ -283,6 +284,28 @@
           }
 
 
+          function ponerImagen(id) 
+          {
+              for (i=0; i<parcelas.length; i++) {
+                   for (j=0; j<parcelas[i].multimedia.length; j++) {
+                        if (parcelas[i].multimedia[j].id == id) {
+                             $("#modalImg").css("background-image","url("+parcelas[i].multimedia[j].url.src+")")
+                        }
+                   }
+              }
+              $("#modalImg").slideDown(200);
+          }
+
+          function cerrarModal() 
+          {
+               $("#modal").fadeOut(200);
+               $("#fondo").fadeOut(200);
+
+               $('audio,video').each(function(){
+                    this.pause();
+               });
+
+          }
 
      </script>
      <style>
@@ -300,7 +323,10 @@
      </div>
 
      <div id="modalImg">
-
+          <div id="cerrarPopupImg" onclick="$('#modalImg').slideUp(200)">
+               <div id="equisImg" class="equis1"></div>
+               <div id="equisImg" class="equis2"></div>
+             </div>
      </div>
 
      <div id="popup">
