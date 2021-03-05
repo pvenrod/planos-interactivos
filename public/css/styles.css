@@ -162,8 +162,23 @@ body,h1 {
 }
 
 .zona {
+     transition: 0.5s;
      position: absolute;
      cursor: pointer;
+}
+
+#anyoSlider {
+     width: 35px;
+     transform: translateX(-50%);
+     background-color: white;
+     color: orange;
+     font-weight: 700;
+     text-shadow: 0px 0px 4px black, 0px 0px 4px black, 0px 0px 4px black, 0px 0px 4px black, 0px 0px 4px black, 0px 0px 4px black;
+     padding: 10px;
+     width: 55px;
+     border-radius: 20px;
+     margin-top: -10px;
+     margin-bottom: 50px;
 }
 
 /* ESTILOS DE LOS POPUP DE LAS PARCELAS ==========================*/

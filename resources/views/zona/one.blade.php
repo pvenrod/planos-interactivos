@@ -103,10 +103,11 @@
                },1000)
 
                setTimeout(function() {
-                    mapear(2021);
+                    mapear($("#sliderAnyos").attr("max"));
                },1500)
      
-     
+               $("#anyoMaximoLabel").html(anyo_maximo);
+               $("#anyoMinimoLabel").html(anyo_minimo);
                //Función que dibuja los canvas en función del año seleccionado, el cual se le pasa como parámetro.
                
      
@@ -120,15 +121,21 @@
 
           function mapear(anyo_seleccionado) 
           {
+               var anyosPosibles = anyo_maximo - anyo_minimo;
+               var porcentaje = 100 - ((anyo_maximo - anyo_seleccionado) * 100 / anyosPosibles);
+
+               $("#anyoSlider").css("left",porcentaje+"%")
+
                $("#popup").slideUp(150);
                if (contador>0)
                     $('#ultCanvas').remove();
                $('#anyoSlider').html(anyo_seleccionado);
                contador++;
 
-               for (i=0; i<parcelas.length; i++) 
+               for (let i=0; i<parcelas.length; i++) 
                {
-                    parcelas[i].ctx.clearRect(0, 0, parcelas[i].canvas.width, parcelas[i].canvas.height);
+                    parcelas[i].canvas.style.opacity = "0";
+                    //parcelas[i].ctx.clearRect(0, 0, parcelas[i].canvas.width, parcelas[i].canvas.height);
 
                     if (anyo_seleccionado >= parcelas[i].anyo_inicio && anyo_seleccionado <= parcelas[i].anyo_fin) 
                     {
@@ -142,6 +149,7 @@
                          parcelas[i].ctx.drawImage(parcelas[i].imagen,0,0);
 
                          document.getElementById("aquiVanLosCanvas").appendChild(parcelas[i].canvas);
+                         parcelas[i].canvas.style.opacity = "1";
                     }
                }
 
@@ -186,7 +194,7 @@
 
                for (i=0; i<parcelas.length; i++) 
                {
-                    if (parcelas[i].ctx.getImageData(x, y, parcelas[i].canvas.width, parcelas[i].canvas.height).data[3] != 0) {
+                    if (parcelas[i].ctx.getImageData(x, y, parcelas[i].canvas.width, parcelas[i].canvas.height).data[3] != 0 && parcelas[i].canvas.style.opacity != "0") {
 
                          //Modificamos la información de popup
                          $("#popup .titulo").html(parcelas[i].nombre)
@@ -195,7 +203,7 @@
                          //Mostramos el popup
                          $("#popup").slideDown(150);
                          $("#popup").css("left",event.x)
-                         $("#popup").css("top",event.y+10)
+                         $("#popup").css("top",event.y+10+window.scrollY)
 
 
                         console.log(parcelas[i].nombre);
@@ -379,9 +387,15 @@
                          </td>
                     </tr>
                     <tr>
-                         <td  style="text-align: center;" colspan="2">
-                              <input type="range" id="sliderAnyos" step="5" oninput="mapear(this.value)"><br>
-                              <span id="anyoSlider"></span>
+                         <td colspan="2">
+                              <div id="slider">
+                                   
+                                   <input type="range" id="sliderAnyos" step="5" oninput="mapear(this.value)"><br>
+                                   <span id="anyoMinimoLabel" style="position: absolute;margin-top: -45px;left: -50px; font-weight: 700;"></span>
+                                   <span id="anyoMaximoLabel" style="position: absolute;margin-top: -45px;left: calc(100% + 20px); font-weight: 700;"></span>
+                                   <div style="position: relative" id="anyoSlider"></div>
+                              </div>
+                              
                          </td>
                     </tr>
                </table>
