@@ -42,8 +42,14 @@ class ZonaController extends Controller
 
           $id = Zona::latest()->first()->id;
 
-          if ($this->procesarImagen($_FILES['imagen'], $id) == "error") {
+          if ($this->procesarImagen($_FILES['imagen'], $id, "normal") == "error") {
                $data["error"] = "No se ha podido subir la imagen.";
+               $data["zonas"] = Zona::all();
+               return view("zona.all", $data);
+          }
+
+          if ($this->procesarImagen($_FILES['imagen_fondo'], $id, "fondo") == "error") {
+               $data["error"] = "No se ha podido subir la imagen de fondo.";
                $data["zonas"] = Zona::all();
                return view("zona.all", $data);
           }
@@ -65,12 +71,17 @@ class ZonaController extends Controller
           $zona->descripcion = $r->descripcion;
           $zona->save();
 
-          if ($this->procesarImagen($_FILES['imagen'], $r->id) == "error") {
+          if ($this->procesarImagen($_FILES['imagen'], $r->id, "normal") == "error") {
                $data["error"] = "No se ha podido subir la imagen.";
                $data["zonas"] = Zona::all();
                return view("zona.all", $data);
           }
 
+          if ($this->procesarImagen($_FILES['imagen_fondo'], $r->id, "fondo") == "error") {
+               $data["error"] = "No se ha podido subir la imagen de fondo.";
+               $data["zonas"] = Zona::all();
+               return view("zona.all", $data);
+          }
 
           return redirect()->route("zona.index");
      }
@@ -86,7 +97,7 @@ class ZonaController extends Controller
 
 
      // Este método requiere dos parámetros: imagen (variable $_FILES["xxxxx"] y el id de la zona)
-     public function procesarImagen($imagen, $id_zona)
+     public function procesarImagen($imagen, $id_zona, $tipo_imagen)
      {
 
           $imagenBuena = "buena";
@@ -97,10 +108,18 @@ class ZonaController extends Controller
                if (!((strpos($tipo, "jpeg") || (strpos($tipo, "jpg") || strpos($tipo, "png")) && ($tamanyo < 2000000)))) {
                     $imagenBuena = "error";
                } else {
-                    $nombreImagen = $id_zona . '.png';
+
+                    if ($tipo_imagen == "normal")
+                         $nombreImagen = $id_zona . '.png';
+                    else
+                         $nombreImagen = 'fondo' . $id_zona . '.png';
                     if ($subida = move_uploaded_file($temp, 'img/zonas/' . $nombreImagen)) {
                          $zona = Zona::find($id_zona);
-                         $zona->imagen = $nombreImagen;
+
+                         if ($tipo_imagen == "normal")
+                              $zona->imagen = $nombreImagen;
+                         else 
+                              $zona->imagen_fondo = $nombreImagen;
                          $zona->save();
                     } else {
                          $imagenBuena = "error";

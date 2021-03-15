@@ -27,6 +27,8 @@
           var botonAudio;
           var botonVideo;
           var botonImagen;
+          var oculto = true; //Es la variable que controla si el plano que se muestra en el fondo está oculto o no
+          var parcelasOcultas = false; //Es la variable que controla si las parcelas que se muestran están ocultas o no
 
           $(document).ready(function() {
 
@@ -98,6 +100,14 @@
                $('#sliderAnyos').attr('max',anyo_maximo);
                $('#sliderAnyos').attr('value',anyo_maximo);
                
+               //Dibujamos la imagen de fondo del canvas (el plano actual)
+               var fondo = document.createElement("img");
+               fondo.setAttribute("class","zona");
+               fondo.setAttribute("style","opacity: 0; transition: 0.5s all");
+               fondo.setAttribute("src","{{asset('img/zonas/'.$zona->imagen_fondo)}}");
+               fondo.setAttribute("id","fondoCanvas");
+               document.getElementById("aquiVanLosCanvas").appendChild(fondo);
+
                setTimeout(function() {
                     mapear($("#sliderAnyos").attr("min"));
                },1000)
@@ -127,10 +137,14 @@
                $("#anyoSlider").css("left",porcentaje+"%")
 
                $("#popup").slideUp(150);
-               if (contador>0)
+               if (contador>0) {
                     $('#ultCanvas').remove();
+               }
+                    
                $('#anyoSlider').html(anyo_seleccionado);
                contador++;
+
+               
 
                for (let i=0; i<parcelas.length; i++) 
                {
@@ -192,18 +206,20 @@
                var videoRelleno = false;
                var imagenRelleno = false;
 
-               for (i=0; i<parcelas.length; i++) 
+               for (let i=0; i<parcelas.length; i++) 
                {
                     if (parcelas[i].ctx.getImageData(x, y, parcelas[i].canvas.width, parcelas[i].canvas.height).data[3] != 0 && parcelas[i].canvas.style.opacity != "0") {
 
-                         //Modificamos la información de popup
-                         $("#popup .titulo").html(parcelas[i].nombre)
-                         $("#popup .descripcion").html(parcelas[i].descripcion)
-
                          //Mostramos el popup
-                         $("#popup").slideDown(150);
-                         $("#popup").css("left",event.x)
-                         $("#popup").css("top",event.y+10+window.scrollY)
+                         $("#popup").slideUp(100);
+                         setTimeout(function() {
+                              $("#popup .titulo").html(parcelas[i].nombre)
+                              $("#popup .descripcion").html(parcelas[i].descripcion)
+                              $("#popup").css("left",event.x)
+                               $("#popup").css("top",event.y+10+window.scrollY);
+                               $("#popup").slideDown(150);
+                         },100)
+                         
 
 
                         console.log(parcelas[i].nombre);
@@ -217,6 +233,7 @@
                                 videoRelleno = true;
                                 $('#video').addClass('imagenRellena');
                                 $('#video').attr('data-parcela',parcelas[i].id)
+                                $('#video').attr('onclick','sacarVideoParcela(this.dataset.parcela)');
                             } else if (parcelas[i].multimedia[j].tipo == 'imagen' && !imagenRelleno) {
                                 imagenRelleno = true;
                                 $('#imagen').addClass('imagenRellena');
@@ -237,21 +254,58 @@
           function sacarAudioParcela(id) 
           {
                $("#popup").slideUp(200);
-               $("#modal").html('<div id="cerrarPopup" onclick="cerrarModal()"> \
+               $("#modal").html('<h3 class="tituloModal"></h3> \
+                              <div id="cerrarPopup" onclick="cerrarModal()"> \
                                    <div id="equis" class="equis1"></div> \
                                    <div id="equis" class="equis2"></div> \
-                         </div>')
+                              </div>')
 
                for (i=0; i<parcelas.length; i++) 
                {
                     if (parcelas[i].id == id) 
                     {
+                         $(".tituloModal").text("Audios de '" + parcelas[i].nombre + "'");
                          for (j=0; j<parcelas[i].multimedia.length; j++) 
                          {
-                         if (parcelas[i].multimedia[j].tipo == "audio") 
-                         {
-                                   $("#modal").html($("#modal").html() + "<audio style='margin-top: 10px; width: 100%; outline: none;' src='" + parcelas[i].multimedia[j].url.src + "' controls>")
+                              if (parcelas[i].multimedia[j].tipo == "audio") 
+                              {
+                                        $("#modal").html($("#modal").html() + "<audio style='margin-top: 10px; width: 100%; outline: none;' src='" + parcelas[i].multimedia[j].url.src + "' controls>")
+                              }
                          }
+                    }
+               }
+
+               $("#fondo").fadeIn(200);
+               $("#modal").fadeIn(200);
+            }
+            
+          function sacarVideoParcela(id) 
+          {
+               var contador = 0;
+               $("#popup").slideUp(200);
+               $("#modal").html('<h3 class="tituloModal"></h3> \
+                              <div id="cerrarPopup" onclick="cerrarModal()"> \
+                                   <div id="equis" class="equis1"></div> \
+                                   <div id="equis" class="equis2"></div> \
+                              </div>')
+
+               for (i=0; i<parcelas.length; i++) 
+               {
+                    if (parcelas[i].id == id) 
+                    {
+                         $(".tituloModal").text("Vídeos de '" + parcelas[i].nombre + "'");
+                         for (j=0; j<parcelas[i].multimedia.length; j++) 
+                         {
+                              if (parcelas[i].multimedia[j].tipo == "video") 
+                              {
+                                   if (contador % 2 == 0) {
+                                        $("#modal").html($("#modal").html() + "<video controls style='margin-top: 10px; width: 48%; margin-right: 4%; outline: none;' src='" + parcelas[i].multimedia[j].url.src + "'>")
+                                   } else {
+                                        $("#modal").html($("#modal").html() + "<video controls style='margin-top: 10px; width: 48%;outline: none;' src='" + parcelas[i].multimedia[j].url.src + "'>")
+                                   }
+                                   
+                                   contador = contador+1;
+                              }
                          }
                     }
                }
@@ -260,28 +314,25 @@
                $("#modal").fadeIn(200);
             }
 
-
           function sacarImgParcela(id) 
           {
                $("#popup").slideUp(200);
-               $("#modal").html('<div id="cerrarPopup" onclick="cerrarModal()"> \
+               $("#modal").html('<h3 class="tituloModal"></h3> \
+                              <div id="cerrarPopup" onclick="cerrarModal()"> \
                                    <div id="equis" class="equis1"></div> \
                                    <div id="equis" class="equis2"></div> \
-                                 </div>')
+                              </div>')
 
                for (i=0; i<parcelas.length; i++) 
                {
                     if (parcelas[i].id == id) 
                     {
+                         $(".tituloModal").text("Imágenes de '" + parcelas[i].nombre + "'");
                          for (j=0; j<parcelas[i].multimedia.length; j++) 
                          {
                               if (parcelas[i].multimedia[j].tipo == "imagen") 
                               {
                                    $("#modal").html($("#modal").html() + "<div class='imgMulti'><img src='" + parcelas[i].multimedia[j].url.src + "' onclick='ponerImagen("+ parcelas[i].multimedia[j].id +")'></div>")
-                              }
-                              else if (parcelas[i].multimedia[j].tipo == "audio")
-                              {
-                                  $("#modal").html($("#modal").html() + "<div class='audioMulti'></div>")
                               }
                          }
                     }
@@ -298,6 +349,7 @@
                    for (j=0; j<parcelas[i].multimedia.length; j++) {
                         if (parcelas[i].multimedia[j].id == id) {
                              $("#modalImg").css("background-image","url("+parcelas[i].multimedia[j].url.src+")")
+                             $("#modalImgExternal").attr("onclick","window.open('"+parcelas[i].multimedia[j].url.src+"','_blank');")
                         }
                    }
               }
@@ -315,6 +367,47 @@
 
           }
 
+          function mostrarFondo() 
+          {
+               if (oculto) {
+                    $("#fondoCanvas").css("opacity","0.6");
+                    $("#mapitaEsquina").css("text-shadow","0px 0px 10px gold");
+                    oculto = false;
+               } else {
+                    $("#fondoCanvas").css("opacity","0");
+                    $("#mapitaEsquina").css("text-shadow","none");
+                    oculto = true;
+               }
+               
+          }
+
+          function ocultarMostrarParcelas()
+          {
+               if (parcelasOcultas) {
+                    for (i=0; i<parcelas.length; i++) {
+                         parcelas[i].canvas.style.display = "block";
+                         $("#ojito").css("opacity","1");
+                    }
+                    parcelasOcultas = false;
+               } else {
+                    for (i=0; i<parcelas.length; i++) {
+                         parcelas[i].canvas.style.display = "none";
+                         $("#ojito").css("opacity","0.7");
+                    }
+                    parcelasOcultas = true;
+               }
+          }
+
+          function cerrarPopup() {
+               $('#audio').removeClass('imagenRellena');
+               $('#audio').attr('onclick','');
+               $('#video').removeClass('imagenRellena');
+               $('#video').attr('onclick','');
+               $('#imagen').removeClass('imagenRellena');
+               $('#imagen').attr('onclick','');
+               $('#popup').slideUp(100)
+          }
+
      </script>
      <style>
      
@@ -325,6 +418,33 @@
 </head>
 <body class="plano" style="overflow:hidden">
 
+     <div onclick="mostrarFondo()" style="position: fixed;
+    width: 80px;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 40px;
+    text-align: center">
+          <i style="position: absolute;
+    font-size: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -5px;" class="fa fa-map-marker" aria-hidden="true"></i>
+          <i style="transition: 0.5s all" id="mapitaEsquina" class="fa fa-map-o" aria-hidden="true"></i>
+    </div>
+
+    <div onmouseover="ocultarMostrarParcelas()" onmouseout="ocultarMostrarParcelas()" style="position: fixed;
+    width: 80px;
+    right: 70px;
+    top: 10px;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 40px;
+    text-align: center">
+          <i id="ojito" class="fa fa-eye" aria-hidden="true"></i>
+    </div>
+
      <div id="fondo"></div>
      <div id="modal">
           
@@ -334,12 +454,13 @@
           <div id="cerrarPopupImg" onclick="$('#modalImg').slideUp(200)">
                <div id="equisImg" class="equis1"></div>
                <div id="equisImg" class="equis2"></div>
-             </div>
+          </div>
+          <i id="modalImgExternal" class="fa fa-external-link" aria-hidden="true" style="position: absolute; font-size: 25px; font-weight: 700; left: 15px; top: 15px; cursor: pointer;"></i>
      </div>
 
      <div id="popup">
           <div id="pestanyitaPopup"></div>
-          <div id="cerrarPopup" onclick="$('#popup').slideUp(100)">
+          <div id="cerrarPopup" onclick="cerrarPopup();">
                <div id="equis" class="equis1"></div>
                <div id="equis" class="equis2"></div>
           </div>
