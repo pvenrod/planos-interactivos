@@ -16,6 +16,7 @@
 
      <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
      <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
+     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 
      <script>
                
@@ -43,6 +44,10 @@
                //Con este bucle, guardamos toda la información que nos devuelve el servidor en objetos de javascript. De esta manera, podremos montar los planos con puro javascript.
      
                @foreach ($parcelas as $parcela)
+
+                    // ==========================================================================
+                    // ======            INICIO DEL BLOQUE DE LA PARCELA {{$parcela->id}}               =======
+                    // ==========================================================================
      
                     var parcela{{$parcela->id}} = new Object();
                     parcela{{$parcela->id}}.id = {{$parcela->id}};
@@ -57,30 +62,38 @@
                     parcela{{ $parcela->id }}.multimedia = [];
      
                     parcelas.push(parcela{{$parcela->id}});
-     
-               @endforeach
 
-               @foreach ($multimedias as $multimedia)
+                    @foreach ($multimedias as $multimedia)
+                    @if ($multimedia->parcela_id == $parcela->id)
+                    // Inicio del recurso multimedia
                     var multimedia{{ $multimedia->id }} = new Object();
                     multimedia{{ $multimedia->id }}.id = {{ $multimedia->id }};
                     @switch($multimedia->tipo)
-                        @case('audio')
-                            multimedia{{ $multimedia->id }}.url = document.createElement('audio')
-                            @break;
-                        @case('video')
-                            multimedia{{ $multimedia->id }}.url = document.createElement('video')
-                            @break;
-                        @case('imagen')
-                            multimedia{{ $multimedia->id }}.url = document.createElement('img')
-                            @break;
+                    @case('audio')
+                    multimedia{{ $multimedia->id }}.url = document.createElement('audio')
+                    @break;
+                    @case('video')
+                    multimedia{{ $multimedia->id }}.url = document.createElement('video')
+                    @break;
+                    @case('imagen')
+                    multimedia{{ $multimedia->id }}.url = document.createElement('img')
+                    @break;
                     @endswitch
                     multimedia{{ $multimedia->id }}.url.setAttribute('src',"{{asset('img/multimedia/'.$multimedia->url)}}")
-                    
                     multimedia{{ $multimedia->id }}.parcela_id = {{ $multimedia->parcela_id }};
                     multimedia{{ $multimedia->id }}.tipo = '{{ $multimedia->tipo }}';
                     multimedias.push(multimedia{{ $multimedia->id }})
-               @endforeach
+                    // Fin del recurso multimedia
+                    @endif
+                    @endforeach
+
+                    // ==========================================================================
+                    // ======              FIN DEL BLOQUE DE LA PARCELA {{$parcela->id}}                =======
+                    // ==========================================================================
      
+               @endforeach
+
+              
                for (i=0; i<parcelas.length; i++) {
                     if (parcelas[i].anyo_inicio < anyo_minimo)
                          anyo_minimo = parcelas[i].anyo_inicio;
@@ -126,7 +139,61 @@
                 botonAudio = document.getElementById('audio');
                 botonVideo = document.getElementById('video');
                 botonImagen = document.getElementById('imagen');
-               
+
+
+
+
+               // MOVIMIENTO POR EL MAPA CUANDO HAY ZOOM APLICADO
+                    var canvasHeight;
+                    var canvasWidth;
+
+                    setTimeout(function() {
+                         canvasHeight = $('#padreAquiVanLosCanvas').height();
+                         canvasWidth = $('#padreAquiVanLosCanvas').width();
+                         $('#aquiVanLosCanvas').css("width",canvasWidth);
+                         $('#aquiVanLosCanvas').css("height",canvasHeight);
+                    },1000)
+                    
+
+                    $('#aquiVanLosCanvas').draggable({
+                    drag: function(evt,ui)
+                    {
+                         
+                         var cosoDentroWidth = $(this).width()
+                         var cosoDentroHeight = $(this).height()
+                         
+                         console.log(cosoDentroWidth + " x " + cosoDentroHeight)
+                         if (ui.position.left < 0) {
+                              if (cosoDentroWidth <= canvasWidth) {
+                                   console.log("cumpliendo a")
+                                   ui.position.left = 0;	
+                              } else if (ui.position.left < -(cosoDentroWidth - canvasWidth)) {
+                                   console.log("cumpliendo b")
+                                   ui.position.left = -(cosoDentroWidth - canvasWidth);
+                              }
+                              else {
+                                   console.log(ui.position.left + " // " +  cosoDentroWidth + " // " + canvasWidth)
+                              }
+                         } else if (ui.position.left+(cosoDentroWidth/2)>0) {
+                              console.log("cumpliendo d")
+                              ui.position.left = 0;	
+                         }
+                         
+                         
+                         if (ui.position.top < 0) {
+                              if (cosoDentroHeight <= canvasHeight) {
+                                   ui.position.top = 0;	
+                              } else if (ui.position.top < -(cosoDentroHeight - canvasHeight)) {
+                                   ui.position.top = -(cosoDentroHeight - canvasHeight);
+                              }
+                         } else {
+                              ui.position.top = 0;	
+                         }
+
+                    }                 
+                    });
+
+
           })
 
           function mapear(anyo_seleccionado) 
@@ -179,6 +246,8 @@
                $(".pergamino").css("height",parcelas[0].imagen.height+150)
                $("#aquiVanLosCanvas").css("width",parcelas[0].imagen.width)
                $("#aquiVanLosCanvas").css("height",parcelas[0].imagen.height)
+               $("#padreAquiVanLosCanvas").css("width",parcelas[0].imagen.width)
+               $("#padreAquiVanLosCanvas").css("height",parcelas[0].imagen.height)
 
 
                $('#audio').removeClass('imagenRellena');
@@ -198,10 +267,11 @@
                $('#imagen').removeClass('imagenRellena');
                $('#imagen').attr('onclick','');
 
-               var rect = parcelas[0].canvas.getBoundingClientRect(); 
-               var x = event.x - rect.left;
-               var y = event.y - rect.top;
-
+               var rect = document.getElementById("padreAquiVanLosCanvas").getBoundingClientRect(); 
+               var x = (event.x - rect.left - parseFloat($("#aquiVanLosCanvas").css("left")));
+               var y = (event.y - rect.top - parseFloat($("#aquiVanLosCanvas").css("top")));
+               console.log("click en " + x + " x " + y)
+               console.log(parseFloat($("#aquiVanLosCanvas").css("width")))
                var audioRelleno = false;
                var videoRelleno = false;
                var imagenRelleno = false;
@@ -221,8 +291,6 @@
                          },100)
                          
 
-
-                        console.log(parcelas[i].nombre);
                         for (let j = 0; j < parcelas[i].multimedia.length; j++) {
                             if (parcelas[i].multimedia[j].tipo == 'audio' && !audioRelleno) {
                                 audioRelleno = true;
@@ -408,6 +476,26 @@
                $('#popup').slideUp(100)
           }
 
+
+          //FUNCIONES DEL ZOOM
+          var contadorZoom = 0;
+          function zoomIn() {
+               if (contadorZoom < 10) {
+                    $("#aquiVanLosCanvas").css("width", parseFloat($("#aquiVanLosCanvas").css("width")) * 1.1)
+                    $("#aquiVanLosCanvas").css("height", parseFloat($("#aquiVanLosCanvas").css("height")) * 1.1)
+                    $("canvas").css("zoom", parseFloat($("canvas").css("zoom")) * 1.1)
+                    contadorZoom = contadorZoom + 1;
+               }
+          }
+          function zoomOut() {
+               if (contadorZoom > 0) {
+                    $("#aquiVanLosCanvas").css("width", parseFloat($("#aquiVanLosCanvas").css("width")) / 1.1)
+                    $("#aquiVanLosCanvas").css("height", parseFloat($("#aquiVanLosCanvas").css("height")) / 1.1)
+                    $("canvas").css("zoom", parseFloat($("canvas").css("zoom")) / 1.1)
+                    contadorZoom = contadorZoom - 1;
+               }
+          }
+
      </script>
      <style>
      
@@ -477,7 +565,27 @@
           </div>
      </div>
 
-     
+     <div onclick="zoomIn()" style="position: fixed;
+    width: 80px;
+    right: 170px;
+    top: 10px;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 40px;
+    text-align: center">
+         <i class="fa fa-search-plus" aria-hidden="true"></i>
+    </div>
+    <div onclick="zoomOut()" style="position: fixed;
+    width: 80px;
+    right: 250px;
+    top: 10px;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 40px;
+    text-align: center">
+         <i class="fa fa-search-minus" aria-hidden="true"></i>
+    </div>
+
      <div id="content" style="height: 100vh">
           <a href="{{route('principal.index')}}">
                <img src="{{asset('img/principal/prev.png')}}" class="prev">
@@ -489,8 +597,10 @@
                <table class="tablaGeneral">
                     <tr>
                          <td rowspan="3">
-                              <div id="aquiVanLosCanvas">
+                              <div id="padreAquiVanLosCanvas" style="overflow: hidden">
+                                   <div id="aquiVanLosCanvas" style="zoom:1">
 
+                                   </div>
                               </div>
                          </td>
                          <td class="lateral">
@@ -511,7 +621,7 @@
                          <td colspan="2">
                               <div id="slider">
                                    
-                                   <input type="range" id="sliderAnyos" step="5" oninput="mapear(this.value)"><br>
+                                   <input type="range" id="sliderAnyos" step="1" oninput="mapear(this.value)"><br>
                                    <span id="anyoMinimoLabel" style="position: absolute;margin-top: -45px;left: -50px; font-weight: 700;"></span>
                                    <span id="anyoMaximoLabel" style="position: absolute;margin-top: -45px;left: calc(100% + 20px); font-weight: 700;"></span>
                                    <div style="position: relative" id="anyoSlider"></div>
