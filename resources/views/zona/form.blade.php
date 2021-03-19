@@ -4,18 +4,20 @@
 @section('content')  
 
     @isset($zona)
-        <form method="post" action="{{route('zona.update',$zona->id)}}" enctype="multipart/form-data">
+        <form method="post" action="{{route('zona.update',$zona->id)}}" enctype="multipart/form-data" class="formulario">
+        <h1>Modificar zona</h1>
     @else
-        <form method="post" action="{{route('zona.store')}}" enctype="multipart/form-data">
+        <form method="post" action="{{route('zona.store')}}" enctype="multipart/form-data" class="formulario">
+        <h1>Nueva zona</h1>
     @endisset
         @csrf
-        Nombre:<span style="color: red">*</span> <input type="text" name="nombre" value="{{$zona->nombre ?? ''}}" required><br>
+        Nombre:<span style="color: red">*</span> <input type="text" name="nombre" value="{{$zona->nombre ?? ''}}" required><br><br>
         Descripción:
-        <textarea name="descripcion">{{$zona->descripcion ?? ''}}</textarea><br>
-        Imagen:<input type="file" name="imagen"><br>
-        Imagen fondo:<input type="file" name="imagen_fondo"><br>
+        <textarea rows="5" name="descripcion">{{$zona->descripcion ?? ''}}</textarea><br><br>
+        Imagen:<input type="file" name="imagen"><br><br>
+        Imagen fondo:<input type="file" name="imagen_fondo"><br><br>
         @isset($zona)
-            <img src="{{asset('img/zonas/'.$zona->imagen)}}" style="width: 100px;"><br>
+            <img src="{{asset('img/zonas/'.$zona->imagen)}}"><br><br>
             <input type="submit" value="Modificar zona"><br><br>
         @else
             <input type="submit" value="Crear zona"><br><br>

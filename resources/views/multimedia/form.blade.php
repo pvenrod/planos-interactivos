@@ -4,9 +4,11 @@
 @section('content')  
 
     @isset($multimedia)
-        <form method="post" action="{{route('multimedia.update',$multimedia->id)}}" enctype="multipart/form-data">
+        <form method="post" action="{{route('multimedia.update',$multimedia->id)}}" enctype="multipart/form-data" class="formulario">
+        <h1>Modificar multimedia</h1>
     @else
-        <form method="post" action="{{route('multimedia.store',$parcela_id)}}" enctype="multipart/form-data">
+        <form method="post" action="{{route('multimedia.store',$parcela_id)}}" enctype="multipart/form-data" class="formulario">
+        <h1>Nueva multimedia</h1>
     @endisset
         @csrf
         Tipo:
@@ -23,10 +25,10 @@
                     <option value="{{ $tipo }}">{{ $tipo }}</option>
             @endisset
         @endforeach
-        </select><br>
-        Imagen:<input type="file" name="url"><br>
+        </select><br><br>
+        Multimedia:<input type="file" name="url"><br>
         @isset($multimedia)
-            <img src="{{asset('img/multimedia/'.$multimedia->url)}}" style="width: 100px;"><br>
+            <img src="{{asset('img/multimedia/'.$multimedia->url)}}"><br>
             <input type="submit" value="Modificar multimedia"><br><br>
         @else
             <input type="submit" value="Crear multimedia"><br><br>
