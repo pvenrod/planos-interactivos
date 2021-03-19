@@ -30,6 +30,9 @@
           var botonImagen;
           var oculto = true; //Es la variable que controla si el plano que se muestra en el fondo está oculto o no
           var parcelasOcultas = false; //Es la variable que controla si las parcelas que se muestran están ocultas o no
+          var contadorZoom = 1;
+          var moviendoMapa;
+          var peli;
 
           $(document).ready(function() {
 
@@ -41,6 +44,10 @@
                     $("body").css("overflow-y","scroll");
                },2700)
      
+
+     
+
+
                //Con este bucle, guardamos toda la información que nos devuelve el servidor en objetos de javascript. De esta manera, podremos montar los planos con puro javascript.
      
                @foreach ($parcelas as $parcela)
@@ -85,14 +92,13 @@
                     multimedias.push(multimedia{{ $multimedia->id }})
                     // Fin del recurso multimedia
                     @endif
-                    @endforeach
+               @endforeach
 
                     // ==========================================================================
                     // ======              FIN DEL BLOQUE DE LA PARCELA {{$parcela->id}}                =======
                     // ==========================================================================
      
                @endforeach
-
               
                for (i=0; i<parcelas.length; i++) {
                     if (parcelas[i].anyo_inicio < anyo_minimo)
@@ -156,9 +162,12 @@
                     
 
                     $('#aquiVanLosCanvas').draggable({
+                    start: function() {
+                         $("#ultCanvas").attr("onclick","")
+                    },
                     drag: function(evt,ui)
                     {
-                         
+                         $("#popup").slideUp(150);
                          var cosoDentroWidth = $(this).width()
                          var cosoDentroHeight = $(this).height()
                          
@@ -170,9 +179,6 @@
                               } else if (ui.position.left < -(cosoDentroWidth - canvasWidth)) {
                                    console.log("cumpliendo b")
                                    ui.position.left = -(cosoDentroWidth - canvasWidth);
-                              }
-                              else {
-                                   console.log(ui.position.left + " // " +  cosoDentroWidth + " // " + canvasWidth)
                               }
                          } else if (ui.position.left+(cosoDentroWidth/2)>0) {
                               console.log("cumpliendo d")
@@ -190,7 +196,11 @@
                               ui.position.top = 0;	
                          }
 
-                    }                 
+                    }, stop: function() {
+                         setTimeout(function() {
+                              $("#ultCanvas").attr("onclick","verificarClick(event)")
+                         },100)
+                    }      
                     });
 
 
@@ -218,16 +228,23 @@
                     parcelas[i].canvas.style.opacity = "0";
                     //parcelas[i].ctx.clearRect(0, 0, parcelas[i].canvas.width, parcelas[i].canvas.height);
 
-                    if (anyo_seleccionado >= parcelas[i].anyo_inicio && anyo_seleccionado <= parcelas[i].anyo_fin) 
+                    if ((anyo_seleccionado > parcelas[i].anyo_inicio && anyo_seleccionado <= parcelas[i].anyo_fin) || (parcelas[i].anyo_inicio == anyo_minimo && anyo_seleccionado == anyo_minimo)) 
                     {
                          parcelas[i].canvas.setAttribute("class","zona");
                          parcelas[i].canvas.setAttribute("id","canvas"+anyo_seleccionado + "_" +i);
                          parcelas[i].canvas.setAttribute("data-numeroMapa",""+contador);
                          parcelas[i].canvas.setAttribute("data-nombre",""+parcelas[i].nombre);
-                         parcelas[i].canvas.width = parcelas[i].imagen.width;
-                         parcelas[i].canvas.height = parcelas[i].imagen.height;
 
-                         parcelas[i].ctx.drawImage(parcelas[i].imagen,0,0);
+                         if (contadorZoom > 1) {
+                              parcelas[i].canvas.width = parcelas[i].imagen.width*contadorZoom;
+                              parcelas[i].canvas.height = parcelas[i].imagen.height*contadorZoom;
+                              parcelas[i].ctx.drawImage(parcelas[i].imagen,0,0,contadorZoom*parcelas[i].imagen.width,contadorZoom*parcelas[i].imagen.height);
+                         } else {
+                              parcelas[i].canvas.width = parcelas[i].imagen.width;
+                              parcelas[i].canvas.height = parcelas[i].imagen.height;
+                              parcelas[i].ctx.drawImage(parcelas[i].imagen,0,0);
+                              
+                         }
 
                          document.getElementById("aquiVanLosCanvas").appendChild(parcelas[i].canvas);
                          parcelas[i].canvas.style.opacity = "1";
@@ -238,14 +255,17 @@
                ultCanvas.setAttribute("class","zona");
                ultCanvas.setAttribute("id","ultCanvas");
                ultCanvas.setAttribute("onclick","verificarClick(event)");
-               ultCanvas.width = parcelas[0].imagen.width;
-               ultCanvas.height = parcelas[0].imagen.height;
+               ultCanvas.width = parcelas[0].imagen.width*contadorZoom;
+               ultCanvas.height = parcelas[0].imagen.height*contadorZoom;
                document.getElementById("aquiVanLosCanvas").appendChild(ultCanvas);
                
                $(".pergamino").css("width",parcelas[0].imagen.width+400)
                $(".pergamino").css("height",parcelas[0].imagen.height+150)
-               $("#aquiVanLosCanvas").css("width",parcelas[0].imagen.width)
-               $("#aquiVanLosCanvas").css("height",parcelas[0].imagen.height)
+               if (!(contadorZoom > 1)) {
+                    $("#aquiVanLosCanvas").css("width",parcelas[0].imagen.width)
+                    $("#aquiVanLosCanvas").css("height",parcelas[0].imagen.height)
+               }
+               
                $("#padreAquiVanLosCanvas").css("width",parcelas[0].imagen.width)
                $("#padreAquiVanLosCanvas").css("height",parcelas[0].imagen.height)
 
@@ -478,23 +498,47 @@
 
 
           //FUNCIONES DEL ZOOM
-          var contadorZoom = 0;
           function zoomIn() {
-               if (contadorZoom < 10) {
+               if (contadorZoom < 2) {
+
+                    contadorZoom = contadorZoom + 0.1;
                     $("#aquiVanLosCanvas").css("width", parseFloat($("#aquiVanLosCanvas").css("width")) * 1.1)
                     $("#aquiVanLosCanvas").css("height", parseFloat($("#aquiVanLosCanvas").css("height")) * 1.1)
-                    $("canvas").css("zoom", parseFloat($("canvas").css("zoom")) * 1.1)
-                    contadorZoom = contadorZoom + 1;
+
+                    for (i=0; i<parcelas.length; i++) {
+                         parcelas[i].ctx.scale(1.1,1.1);
+                    }
+                    mapear($("#sliderAnyos").val());
                }
           }
           function zoomOut() {
-               if (contadorZoom > 0) {
-                    $("#aquiVanLosCanvas").css("width", parseFloat($("#aquiVanLosCanvas").css("width")) / 1.1)
-                    $("#aquiVanLosCanvas").css("height", parseFloat($("#aquiVanLosCanvas").css("height")) / 1.1)
-                    $("canvas").css("zoom", parseFloat($("canvas").css("zoom")) / 1.1)
-                    contadorZoom = contadorZoom - 1;
+               if (contadorZoom > 1) {
+                    
+                    contadorZoom = contadorZoom - 0.1;
+                    $("#aquiVanLosCanvas").css("width", parseInt(parseFloat($("#aquiVanLosCanvas").css("width")) / 1.1))
+                    $("#aquiVanLosCanvas").css("height", parseInt(parseFloat($("#aquiVanLosCanvas").css("height")) / 1.1))
+
+                    for (i=0; i<parcelas.length; i++) {
+                         parcelas[i].ctx.scale(1.1,1.1);
+                    }
+                    mapear($("#sliderAnyos").val());
                }
           }
+
+          function verPelicula() {
+               var anyo = anyo_minimo;
+               peli = setInterval(function() {
+                    console.log("setinetrval")
+                    if (anyo<=anyo_maximo) {
+                         $("#sliderAnyos").val(anyo);
+                         mapear(anyo)
+                    } else {
+                         clearInterval(peli)
+                    }
+                    anyo++;
+               },50)
+          }
+          
 
      </script>
      <style>
@@ -584,6 +628,17 @@
     font-size: 40px;
     text-align: center">
          <i class="fa fa-search-minus" aria-hidden="true"></i>
+    </div>
+
+<div onclick="verPelicula()" style="position: fixed;
+    width: 80px;
+    right: 320px;
+    top: 10px;
+    cursor: pointer;
+    opacity: 1;
+    font-size: 40px;
+    text-align: center">
+         <i class="fa fa-play" aria-hidden="true"></i>
     </div>
 
      <div id="content" style="height: 100vh">
