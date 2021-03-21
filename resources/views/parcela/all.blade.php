@@ -3,7 +3,11 @@
 @section('title','Lista de parcelas')
 
 @section('tituloAdministracion')
-     <h1 class="tituloAdministracion">Administración de parcelas</h1>
+    @if(isset($nombreZona))
+        <h1 class="tituloAdministracion">Administración de parcelas {{'de la zona "' . $nombreZona . '"'}}</h1>
+    @else
+        <h1 class="tituloAdministracion">Administración de parcelas</h1>
+    @endif
 @endsection
 
 @section('content')

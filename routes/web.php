@@ -37,6 +37,7 @@ Route::get('/usuarios/borrar/{id}', 'UserController@destroy')->name("user.destro
 // Parcelas ========================================================
 Route::get('/parcelas','ParcelaController@index')->name("parcela.index")->middleware('userauth');
 Route::get('/parcelas/crear','ParcelaController@create')->name('parcela.create')->middleware('userauth');
+Route::get('/parcelas/{id}','ParcelaController@zonaConcreta')->name("parcela.zonaConcreta")->middleware('userauth');
 Route::post('/parcelas/almacenar', 'ParcelaController@store')->name("parcela.store")->middleware('userauth');
 Route::get('/parcelas/editar/{id}','ParcelaController@edit')->name('parcela.edit')->middleware('userauth');
 Route::post('/parcelas/editar/{id}', 'ParcelaController@update')->name("parcela.update")->middleware('userauth');

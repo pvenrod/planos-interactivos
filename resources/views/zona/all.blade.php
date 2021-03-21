@@ -15,7 +15,7 @@
             <th>Descripción</th>
             <th>Fecha de creación</th>
             <th>Última modificación</th>
-            <th colspan="3">Acciones</th>
+            <th colspan="4">Acciones</th>
         </tr>
 
 
@@ -31,7 +31,8 @@
             <td>{{$zona->updated_at}}</td>
             <td><a class="boton modificar" href="{{route('zona.edit',$zona->id)}}">Modificar</a></td>
             <td><a class="boton eliminar" href="{{route('zona.destroy',$zona->id)}}">Eliminar</a></td>
-            <td><a class="boton visualizar" href="{{route('zona.show',$zona->id)}}">Visualizar</a></td>
+            <td><a class="boton visualizar" href="{{route('zona.show',$zona->id)}}">Visualizar</a><br></td>
+            <td><a class="boton multimedia" href="{{ route('parcela.zonaConcreta',$zona->id) }}">Parcelas</a></td>
         </tr>
 
         @endforeach

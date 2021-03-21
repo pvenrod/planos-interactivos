@@ -17,6 +17,14 @@ class ParcelaController extends Controller
         return view('parcela.all',$data);
     }
 
+    public function zonaConcreta($zona) 
+    {
+        $data['parcelas'] = DB::table('parcelas')->leftjoin('zonas','parcelas.zona_id','=','zonas.id')->select('parcelas.*','zonas.nombre as zona_nombre')->where('parcelas.zona_id','=',$zona)->get();
+        $data['nombreZona'] = Zona::find($zona)->nombre;
+
+        return view('parcela.all',$data);
+    }
+
      public function create()
      {
           $data['zonas'] = Zona::all('id','nombre','imagen');
