@@ -657,3 +657,23 @@ how to remove the virtical space around the range input in IE*/
 }
 
  
+.divPelicula {
+    position: relative;
+    width: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    opacity: 1;
+    font-size: 40px;
+    text-align: center;
+    transition: all 0.5s;
+    text-shadow: black 0px 0px 10px;
+}
+
+.divPelicula :last-child:hover {
+    text-shadow: gold 0px 0px 10px;
+}
+
+.divPelicula #velocidadesPelicula:hover {
+    text-shadow: none;
+}

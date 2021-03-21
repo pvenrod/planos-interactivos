@@ -22,7 +22,7 @@
                 <tr>
                     <td>{{ $multimedia->id }}</td>
                     <td>{{ $multimedia->tipo }}</td>
-                    <td><img style="width: 100px" src="{{ asset('img/multimedia/'.$multimedia->url) }}" alt="Imagen de la multimedia"></td>
+                    <td><a href="{{ asset('img/multimedia/'.$multimedia->url) }}" target="_blank">Ver detalles</a></td>
                     <td><a class="boton modificar" href="{{ route('multimedia.edit',$multimedia->id) }}">Modificar</a></td>
                     <td><a class="boton eliminar" href="{{ route('multimedia.destroy',$multimedia->id) }}">Eliminar</a></td>
                 </tr>

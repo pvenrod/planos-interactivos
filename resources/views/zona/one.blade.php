@@ -203,6 +203,26 @@
                     }      
                     });
 
+            $("#velocidadesPelicula").click(function() {
+                velocidad-=50;
+                if (velocidad == 50)
+                    velocidad = 25;
+                if (velocidad <= 0)
+                    velocidad = 150;
+                
+                switch(velocidad) {
+                    case 150:
+                        $("#velocidadesPelicula").text("x1");
+                    break;
+                    case 100:
+                        $("#velocidadesPelicula").text("x2");
+                    break;
+                    case 25:
+                        $("#velocidadesPelicula").text("x4");
+                    break;
+                }
+            })
+
 
           })
 
@@ -525,18 +545,43 @@
                }
           }
 
+          var velocidad = 150;
+
           function verPelicula() {
-               var anyo = anyo_minimo;
-               peli = setInterval(function() {
+              $("#textoPelicula").text("Parar película");
+              $("#spanQueReproduce, #spanQueReproduce span").css("text-shadow","none");
+              $("#spanQueReproduce i").removeClass("fa fa-play");
+              $("#spanQueReproduce i").addClass("fa fa-stop");
+
+              var funcionPeli = function() {
+                    clearInterval(peli);
                     console.log("setinetrval")
                     if (anyo<=anyo_maximo) {
+                        peli = setInterval(funcionPeli,velocidad)
                          $("#sliderAnyos").val(anyo);
                          mapear(anyo)
                     } else {
                          clearInterval(peli)
+                         $("#spanQueReproduce").attr("onclick","verPelicula()")
+                         $("#spanQueReproduce i").removeClass("fa fa-stop");
+                         $("#spanQueReproduce i").addClass("fa fa-play");
+                         $("#textoPelicula").text("Ver película");
                     }
                     anyo++;
-               },50)
+               }
+
+               var anyo = anyo_minimo;
+               $("#spanQueReproduce").attr("onclick","detenerPelicula()")
+               peli = setInterval(funcionPeli,velocidad)
+          }
+
+          function detenerPelicula() {
+            $("#spanQueReproduce, #spanQueReproduce span").css("text-shadow","gold 0px 0px 10px");
+            $("#spanQueReproduce").attr("onclick","verPelicula()")
+            $("#spanQueReproduce i").removeClass("fa fa-stop");
+            $("#spanQueReproduce i").addClass("fa fa-play");
+            $("#textoPelicula").text("Ver película");
+            clearInterval(peli);
           }
           
 
@@ -630,17 +675,6 @@
          <i class="fa fa-search-minus" aria-hidden="true"></i>
     </div>
 
-<div onclick="verPelicula()" style="position: fixed;
-    width: 80px;
-    right: 320px;
-    top: 10px;
-    cursor: pointer;
-    opacity: 1;
-    font-size: 40px;
-    text-align: center">
-         <i class="fa fa-play" aria-hidden="true"></i>
-    </div>
-
      <div id="content" style="height: 100vh">
           <a href="{{route('principal.index')}}">
                <img src="{{asset('img/principal/prev.png')}}" class="prev">
@@ -680,6 +714,11 @@
                                    <span id="anyoMinimoLabel" style="position: absolute;margin-top: -45px;left: -50px; font-weight: 700;"></span>
                                    <span id="anyoMaximoLabel" style="position: absolute;margin-top: -45px;left: calc(100% + 20px); font-weight: 700;"></span>
                                    <div style="position: relative" id="anyoSlider"></div>
+                                   <div class="divPelicula">
+                                        <div id="velocidadesPelicula" style="position: relative;display: inline;user-select: none;font-size: 18px; top: -6px;right: 5px;text-shadow: red 0px 0px 12px">x1</div>
+                                        <span id="spanQueReproduce" onclick="verPelicula()"><i class="fa fa-play" aria-hidden="true"></i>
+                                    <span id="textoPelicula" style="font-size: 20px; color:white; font-weight: 700;top: -7px;position:relative;left: 5px;">Ver película</span></span>
+                                    </div>
                               </div>
                               
                          </td>
