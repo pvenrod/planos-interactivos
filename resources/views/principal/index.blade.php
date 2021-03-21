@@ -144,9 +144,6 @@ https://templatemo.com/tm-520-highway
                       <a href="{{ route('principal.index') }}">Inicio</a>
                   </li>
                   <li>
-                      <a href="{{ route('principal.about') }}">Sobre nosotros</a>
-                  </li>
-                  <li>
                       <a href="{{ route('auth.index') }}">Iniciar sesión</a>
                   </li>
               </ul>
