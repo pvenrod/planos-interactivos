@@ -2,10 +2,10 @@
 -- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 21-03-2021 a las 20:21:13
--- Versión del servidor: 10.4.13-MariaDB
--- Versión de PHP: 7.4.7
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 22-03-2021 a las 10:47:51
+-- Versión del servidor: 5.7.31
+-- Versión de PHP: 7.3.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,14 +27,17 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `failed_jobs`
 --
 
-CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `failed_jobs`;
+CREATE TABLE IF NOT EXISTS `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -43,11 +46,13 @@ CREATE TABLE `failed_jobs` (
 -- Estructura de tabla para la tabla `migrations`
 --
 
-CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE IF NOT EXISTS `migrations` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `migrations`
@@ -67,14 +72,16 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- Estructura de tabla para la tabla `multimedia`
 --
 
-CREATE TABLE `multimedia` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `multimedia`;
+CREATE TABLE IF NOT EXISTS `multimedia` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `tipo` enum('audio','video','imagen') COLLATE utf8mb4_unicode_ci NOT NULL,
   `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parcela_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `multimedia`
@@ -106,7 +113,9 @@ INSERT INTO `multimedia` (`id`, `tipo`, `url`, `parcela_id`, `created_at`, `upda
 (25, 'audio', '25.mp3', 37, '2021-03-21 09:31:04', '2021-03-21 09:31:04'),
 (26, 'audio', '26.mp3', 36, '2021-03-21 09:34:09', '2021-03-21 09:34:09'),
 (27, 'audio', '27.mp3', 34, '2021-03-21 09:39:18', '2021-03-21 09:39:18'),
-(30, 'audio', '30.mp3', 34, '2021-03-21 18:20:38', '2021-03-21 18:20:38');
+(30, 'audio', '30.mp3', 34, '2021-03-21 18:20:38', '2021-03-21 18:20:38'),
+(53, 'video', '53.mp4', 37, '2021-03-22 09:39:47', '2021-03-22 09:39:47'),
+(54, 'video', '54.mp4', 34, '2021-03-22 09:43:13', '2021-03-22 09:43:13');
 
 -- --------------------------------------------------------
 
@@ -114,8 +123,9 @@ INSERT INTO `multimedia` (`id`, `tipo`, `url`, `parcela_id`, `created_at`, `upda
 -- Estructura de tabla para la tabla `parcelas`
 --
 
-CREATE TABLE `parcelas` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `parcelas`;
+CREATE TABLE IF NOT EXISTS `parcelas` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `anyo_inicio` int(11) NOT NULL,
   `anyo_fin` int(11) NOT NULL,
   `imagen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -123,8 +133,9 @@ CREATE TABLE `parcelas` (
   `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `parcelas`
@@ -162,10 +173,12 @@ INSERT INTO `parcelas` (`id`, `anyo_inicio`, `anyo_fin`, `imagen`, `zona_id`, `n
 -- Estructura de tabla para la tabla `password_resets`
 --
 
-CREATE TABLE `password_resets` (
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE IF NOT EXISTS `password_resets` (
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -174,16 +187,19 @@ CREATE TABLE `password_resets` (
 -- Estructura de tabla para la tabla `users`
 --
 
-CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `users`
@@ -199,15 +215,18 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 -- Estructura de tabla para la tabla `zonas`
 --
 
-CREATE TABLE `zonas` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `zonas`;
+CREATE TABLE IF NOT EXISTS `zonas` (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `imagen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `imagen_fondo` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `zonas_nombre_unique` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `zonas`
@@ -218,97 +237,7 @@ INSERT INTO `zonas` (`id`, `nombre`, `descripcion`, `imagen`, `imagen_fondo`, `c
 (3, 'Puerta de Purchena', NULL, '3.png', '', '2021-02-13 13:01:01', '2021-02-13 13:01:01'),
 (4, 'Zapillo', NULL, '4.png', '', '2021-02-13 13:01:48', '2021-02-13 13:01:48'),
 (5, 'Nueva Almería', NULL, '5.png', '', '2021-02-13 13:02:21', '2021-02-13 13:02:21'),
-(6, 'Chanca', NULL, '6.png', '', '2021-02-13 13:03:11', '2021-02-13 13:03:11'),
-(7, 'Pescadería', NULL, '7.png', '', '2021-02-13 13:03:38', '2021-02-13 13:03:38');
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
-
---
--- Indices de la tabla `migrations`
---
-ALTER TABLE `migrations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `multimedia`
---
-ALTER TABLE `multimedia`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `parcelas`
---
-ALTER TABLE `parcelas`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `password_resets`
---
-ALTER TABLE `password_resets`
-  ADD KEY `password_resets_email_index` (`email`);
-
---
--- Indices de la tabla `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users_email_unique` (`email`);
-
---
--- Indices de la tabla `zonas`
---
-ALTER TABLE `zonas`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `zonas_nombre_unique` (`nombre`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `failed_jobs`
---
-ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `migrations`
---
-ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `multimedia`
---
-ALTER TABLE `multimedia`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
-
---
--- AUTO_INCREMENT de la tabla `parcelas`
---
-ALTER TABLE `parcelas`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
-
---
--- AUTO_INCREMENT de la tabla `users`
---
-ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `zonas`
---
-ALTER TABLE `zonas`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+(6, 'Chanca', NULL, '6.png', '', '2021-02-13 13:03:11', '2021-02-13 13:03:11');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
