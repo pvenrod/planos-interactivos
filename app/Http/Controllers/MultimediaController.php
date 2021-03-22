@@ -35,6 +35,7 @@ class MultimediaController extends Controller
           if ($this->procesarImagen($_FILES['url'], $idMultimedia) == "error") {
                $data["error"] = "Formato de archivo incorrecto. Por favor inténtelo de nuevo. Formatos válidos: jpg,png,mp3,wma,mp4,wmv,avi";
                $data['multimedias'] = DB::table('multimedia')->where('multimedia.parcela_id', '=', $id)->get();
+               $data['parcela'] = DB::table('parcelas')->where('parcelas.id','=',$id)->first();
                return view("multimedia.all", $data);
           }
 
@@ -59,6 +60,7 @@ class MultimediaController extends Controller
           if ($this->procesarImagen($_FILES['url'], $r->id) == "error") {
                $data["error"] = "Formato de archivo incorrecto. Por favor inténtelo de nuevo. Formatos válidos: jpg,png,mp3,wma,mp4,wmv,avi";
                $data['multimedias'] = DB::table('multimedia')->where('multimedia.parcela_id', '=', $r->id)->get();
+               $data['parcela'] = DB::table('parcelas')->where('parcelas.id','=',$r->id)->first();
                return view("multimedia.all", $data);
           }
 
@@ -78,13 +80,12 @@ class MultimediaController extends Controller
 
      public function procesarImagen($url, $id_multimedia)
      {
-
-          $imagenBuena = "buena";
+         $imagenBuena = "buena";
           if ($url["error"] != 4) {
                $tamanyo = $url['size'];
                $temp = $url['tmp_name'];
                $nombre = pathinfo($url['name'], PATHINFO_EXTENSION);
-               if (!(($nombre == 'jpg') || ($nombre == 'png') || ($nombre == 'mp3') || ($nombre == 'wma') || ($nombre == 'mp4') || ($nombre == 'avi') || ($nombre == 'wmv') && ($tamanyo < 209715200))) {
+               if (!(($nombre == 'jpg') || ($nombre == 'png') || ($nombre == 'mp3') || ($nombre == 'wma') || ($nombre == 'mp4') || ($nombre == 'avi') || ($nombre == 'wmv') && ($tamanyo < 2097152000))) {
                     $imagenBuena = "error";
                } else {
                     $nombreImagen = $id_multimedia . '.' . $nombre;
